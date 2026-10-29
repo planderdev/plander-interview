@@ -144,7 +144,7 @@ export default async function ProposalPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
-      <article className="print-plain rounded-[6px] px-5 py-8 sm:px-12 sm:py-12" style={{ background: C.paper, color: C.ink, colorScheme: "light" }}>
+      <article className="print-plain print-doc rounded-[6px] px-5 py-8 sm:px-12 sm:py-12" style={{ background: C.paper, color: C.ink, colorScheme: "light" }}>
         <div className="mx-auto grid max-w-[820px] gap-12">
           <header className="grid gap-8">
             <div className="flex items-center justify-between">

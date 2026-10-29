@@ -8,11 +8,22 @@ const krw = (n: number) => `₩${n.toLocaleString("ko-KR")}`;
  * 플랜더 견적서 양식. 기존 PDF 견적서와 같은 구성(Estimate 표시, 워드마크, 제목, 공급자와 수신자, 견적항목, 참고사항, 합계)입니다.
  * 종이 위에 잉크로만 그리고, 강조는 검정 면으로 합니다. A4 한 장에 맞춰 인쇄됩니다.
  */
-export function QuoteDocument({ quote, clientName, items }: { quote: Quote; clientName: string; items: PlanderItem[] }) {
+export function QuoteDocument({
+  quote,
+  clientName,
+  items,
+  sealSrc,
+}: {
+  quote: Quote;
+  clientName: string;
+  items: PlanderItem[];
+  /** 직인 이미지 주소. 없으면 직인을 그리지 않습니다. */
+  sealSrc?: string;
+}) {
   const est = estimate(items);
 
   return (
-    <article className="quote-sheet mx-auto grid w-full max-w-[860px] gap-7 bg-white p-6 text-[#0B0B0D] sm:p-12">
+    <article id="quote-sheet" className="quote-sheet mx-auto grid w-full max-w-[860px] gap-7 bg-white p-6 text-[#0B0B0D] sm:p-12">
       <header className="flex items-start justify-between gap-4">
         <span className="rounded-md bg-[#EEF0F3] px-3 py-1.5 text-[13px] font-semibold tracking-wide text-[#9AA0AA]">Estimate</span>
         <span className="wordmark text-[24px] text-[#0B0B0D]" role="img" aria-label="PLANDER" />
@@ -39,7 +50,19 @@ export function QuoteDocument({ quote, clientName, items }: { quote: Quote; clie
           <span className="text-[17px] font-semibold">{SUPPLIER.name}</span>
           <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-[13px]">
             <dt className="text-[#5C5F68]">사업자</dt><dd>{SUPPLIER.bizNo}</dd>
-            <dt className="text-[#5C5F68]">대표자</dt><dd>{SUPPLIER.ceo}</dd>
+            <dt className="text-[#5C5F68]">대표자</dt>
+            <dd className="flex items-center gap-1.5">
+              {SUPPLIER.ceo}
+              {sealSrc && (
+                // 대표자 이름 바로 옆에 직인을 찍습니다. 위아래 줄을 가리지 않게 이 줄의 높이 안에 둡니다.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={sealSrc}
+                  alt="주식회사 플랜더 직인"
+                  className="pointer-events-none -my-1.5 h-[40px] w-[40px] opacity-90 mix-blend-multiply"
+                />
+              )}
+            </dd>
             <dt className="text-[#5C5F68]">이메일</dt><dd>{SUPPLIER.email}</dd>
             <dt className="text-[#5C5F68]">주소</dt><dd>{SUPPLIER.address}</dd>
           </dl>

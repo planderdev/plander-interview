@@ -3,8 +3,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { PrintButton } from "@/components/print-button";
+import { FitA4 } from "@/components/fit-a4";
 import { QuoteDocument } from "@/components/quote-document";
 import { resolveQuote } from "@/lib/quote";
+import { SEAL_SRC, hasSeal } from "@/lib/seal";
 import { getInterview, getMe, listMembers } from "@/lib/store";
 
 export const metadata: Metadata = { title: "견적서", robots: { index: false, follow: false } };
@@ -46,7 +48,8 @@ export default async function QuotePreviewPage({ params }: { params: Promise<{ i
       </div>
       <div className="print-plain rounded-[6px] bg-[#F1F2F6] p-2 sm:p-6">
         <div className="mx-auto max-w-[860px] rounded-[6px] border border-[#D8DDE6] print:border-0">
-          <QuoteDocument quote={quote} clientName={iv.clientName} items={iv.planderItems} />
+          <QuoteDocument quote={quote} clientName={iv.clientName} items={iv.planderItems} sealSrc={hasSeal() ? SEAL_SRC : undefined} />
+          <FitA4 targetId="quote-sheet" />
         </div>
       </div>
     </div>
