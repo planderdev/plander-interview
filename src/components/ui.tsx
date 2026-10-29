@@ -2,6 +2,19 @@
 
 import type { ReactNode } from "react";
 
+/** 섹션 머리의 영문 라벨 (PLANDER 디자인 시스템: 11px, 자간 0.12em, 대문자) */
+const SECTION_LABEL: Record<string, string> = {
+  meeting: "Meeting",
+  counterparts: "Counterpart",
+  business: "Business",
+  needs: "Needs",
+  plander: "What we do",
+  partners: "Partners",
+  summary: "Summary",
+  share: "Sharing",
+  convert: "Conversion",
+};
+
 export function Section({
   id,
   no,
@@ -18,13 +31,15 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section id={id} className="card grid scroll-mt-24 gap-5 p-5 sm:p-6" aria-labelledby={`${id}-h`}>
+    <section id={id} className="card grid scroll-mt-24 gap-5 p-5 sm:p-7" aria-labelledby={`${id}-h`}>
+      {/* 섹션 머리: 영문 라벨과 번호, 아래 1px 선 */}
+      <div className="flex items-center justify-between border-b border-line pb-3">
+        <span className="eyebrow">{SECTION_LABEL[id] ?? id}</span>
+        <span className="index">{String(no).padStart(2, "0")}</span>
+      </div>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="grid gap-1">
-          <h2 id={`${id}-h`} className="section-title">
-            <span className="num mr-2 text-sm text-mute">{String(no).padStart(2, "0")}</span>
-            {title}
-          </h2>
+          <h2 id={`${id}-h`} className="section-title">{title}</h2>
           {desc && <p className="text-sm text-sub">{desc}</p>}
         </div>
         {aside}
@@ -79,7 +94,7 @@ export function Chips({
 
 export function RemoveButton({ onClick, label, disabled }: { onClick: () => void; label: string; disabled?: boolean }) {
   return (
-    <button type="button" className="btn btn-sm text-danger" onClick={onClick} aria-label={label} disabled={disabled}>
+    <button type="button" className="btn btn-sm btn-danger" onClick={onClick} aria-label={label} disabled={disabled}>
       삭제
     </button>
   );

@@ -179,7 +179,7 @@ export function ConvertSection({
         </div>
         <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
           <span className="num text-sm text-sub">예상 공급가 {won(est.supply)}</span>
-          <button type="button" className="btn btn-prism ml-auto" onClick={convert} disabled={readOnly || pending || !interview.clientName.trim()}>
+          <button type="button" className="btn btn-primary ml-auto" onClick={convert} disabled={readOnly || pending || !interview.clientName.trim()}>
             {pending ? "전환 중" : "의뢰로 전환"}
           </button>
         </div>

@@ -13,13 +13,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const mock = !isSupabaseConfigured();
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-20 border-b border-line bg-canvas/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
-          <Link href="/interviews" className="flex items-center gap-2 font-bold">
-            <img src="/icon.svg" alt="" width={26} height={26} />
-            <span>플랜더 인터뷰</span>
+      <header className="sticky top-0 z-50 border-b border-line bg-canvas/70 backdrop-blur-[24px]">
+        <div className="mx-auto flex min-h-[64px] max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
+          {/* 로고 락업: PLANDER 워드마크 + 세로선 + 제품명 */}
+          <Link href="/interviews" className="flex items-center gap-3" aria-label="PLANDER 인터뷰 홈">
+            <span className="wordmark text-[22px] text-ink" role="img" aria-label="PLANDER" />
+            <span className="h-4 w-px bg-ink/25" aria-hidden />
+            <span className="text-[15px] font-semibold tracking-tight">인터뷰</span>
           </Link>
-          {mock && <span className="chip border-warning/40 text-warning">목업 모드</span>}
+          {mock && <span className="chip"><span className="dot text-warning" aria-hidden />목업 모드</span>}
           <div className="ml-auto flex items-center gap-2 text-sm">
             <span className="hidden text-sub sm:inline">
               {me.name} <span className="text-mute">{ROLE_LABEL[me.role]}</span>

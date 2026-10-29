@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#08090b",
+  themeColor: "#050505",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -28,7 +28,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="min-h-dvh antialiased">{children}</body>
+      <body className="min-h-dvh antialiased">
+        <div className="ambient" aria-hidden />
+        <div className="relative z-[2]">{children}</div>
+        <div className="grain" aria-hidden />
+      </body>
     </html>
   );
 }

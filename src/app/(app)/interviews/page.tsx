@@ -41,12 +41,13 @@ export default async function InterviewsPage({
   return (
     <div className="grid gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="grid gap-1">
-          <h1 className="text-2xl font-bold">고객 인터뷰</h1>
-          <p className="text-sm text-sub">미팅에서 들은 내용을 기록하고, 정리해서 고객과 공유하고, 의뢰로 전환합니다.</p>
+        <div className="grid gap-2">
+          <span className="eyebrow">Interviews</span>
+          <h1 className="text-[30px] font-semibold tracking-[-0.04em] sm:text-[38px]">고객 인터뷰</h1>
+          <p className="text-[15px] text-sub">고객과 함께 나눈 이야기를 기록하고, 정리해서 공유하고, 다음 프로젝트로 이어 갑니다.</p>
         </div>
         <form action={createInterviewAction}>
-          <button className="btn btn-prism">새 인터뷰 시작</button>
+          <button className="btn btn-primary">새 인터뷰 시작</button>
         </form>
       </div>
 
@@ -84,20 +85,20 @@ export default async function InterviewsPage({
             const r = readiness(i);
             return (
               <li key={i.id}>
-                <Link href={`/interviews/${i.id}`} className="card grid h-full gap-3 p-5 transition hover:border-prism/50">
+                <Link href={`/interviews/${i.id}`} className="card grid h-full gap-3 p-5 transition-colors duration-300 hover:border-ink/30">
                   <div className="flex items-start justify-between gap-3">
                     <div className="grid min-w-0 gap-0.5">
                       <span className="truncate text-xs text-sub">{i.clientName || "고객사 미입력"}</span>
                       <span className="font-semibold leading-snug">{i.title}</span>
                     </div>
-                    <span className={`chip shrink-0 ${STATUS_META[i.status].tone}`}>{STATUS_META[i.status].label}</span>
+                    <span className="chip shrink-0"><span className={`dot ${STATUS_META[i.status].tone}`} aria-hidden />{STATUS_META[i.status].label}</span>
                   </div>
                   <p className="line-clamp-2 min-h-[2.8em] text-sm text-sub">{i.summary.oneline || "아직 요약이 없습니다."}</p>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-mute">
                     <span className="num">{i.heldAt ? i.heldAt.replace("T", " ") : "일시 미정"}</span>
                     <span>작성 {nameOf(i.createdBy)}</span>
                     <span>{SCOPE_META[i.internalScope].label}</span>
-                    {i.shareEnabled && <span className="text-prism">고객 공유 중</span>}
+                    {i.shareEnabled && <span className="inline-flex items-center gap-1.5 text-sub"><span className="dot text-prism" aria-hidden />고객 공유 중</span>}
                     <span className="num ml-auto">{est.supply ? won(est.supply) : "견적 없음"}</span>
                     <span className="num">전환 준비 {r.done}/{r.total}</span>
                   </div>

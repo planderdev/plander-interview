@@ -16,7 +16,7 @@ const config: Config = {
         warning: "hsl(var(--warning) / <alpha-value>)",
         success: "hsl(var(--success) / <alpha-value>)",
       },
-      borderRadius: { card: "20px" },
+      borderRadius: { card: "16px" },
       fontFamily: {
         sans: ["Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "system-ui", "sans-serif"],
         num: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],

@@ -137,8 +137,8 @@ export function InterviewEditor({
         <ol className="sticky top-24 grid gap-1 text-sm">
           {NAV.map(([id, label], idx) => (
             <li key={id}>
-              <a href={`#${id}`} className="flex gap-2 rounded-lg px-3 py-1.5 text-sub hover:bg-ink/5 hover:text-ink">
-                <span className="num text-mute">{String(idx + 1).padStart(2, "0")}</span>
+              <a href={`#${id}`} className="flex items-center gap-3 rounded-full px-3 py-1.5 text-sub transition-colors duration-300 hover:bg-ink/5 hover:text-ink">
+                <span className="index">{String(idx + 1).padStart(2, "0")}</span>
                 {label}
               </a>
             </li>
@@ -149,11 +149,12 @@ export function InterviewEditor({
       <div className="grid min-w-0 gap-5">
         {/* 머리글 */}
         <div className="flex flex-wrap items-center gap-3">
-          <a href="/interviews" className="text-sm text-sub hover:text-ink">← 인터뷰 목록</a>
-          <span
-            className={`chip ml-auto ${state === "error" ? "text-danger" : state === "saved" ? "text-success" : "text-sub"}`}
-            role="status"
-          >
+          <a href="/interviews" className="text-link text-sm text-sub">인터뷰 목록</a>
+          <span className="chip ml-auto" role="status">
+            <span
+              className={`dot ${readOnly ? "text-mute" : state === "error" ? "text-danger" : state === "saved" ? "text-success" : "text-prism"}`}
+              aria-hidden
+            />
             {readOnly ? "읽기 전용" : stateLabel[state]}
           </span>
           {!readOnly && state !== "saved" && (
@@ -170,7 +171,7 @@ export function InterviewEditor({
         )}
 
         <input
-          className="w-full bg-transparent text-2xl font-bold outline-none placeholder:text-mute focus:outline-none"
+          className="w-full bg-transparent text-[28px] font-semibold tracking-[-0.035em] outline-none placeholder:text-mute focus:outline-none sm:text-[34px]"
           aria-label="인터뷰 제목"
           id="iv-title"
           value={iv.title}
@@ -523,7 +524,7 @@ export function InterviewEditor({
                 <button type="button" className="btn btn-sm" onClick={() => setConfirmDelete(false)}>취소</button>
                 <button
                   type="button"
-                  className="btn btn-sm border-danger/50 text-danger"
+                  className="btn btn-sm btn-danger"
                   disabled={deleting}
                   onClick={() => startDelete(() => deleteAction(iv.id))}
                 >
@@ -531,7 +532,7 @@ export function InterviewEditor({
                 </button>
               </>
             ) : (
-              <button type="button" className="btn btn-sm text-danger" onClick={() => setConfirmDelete(true)}>
+              <button type="button" className="btn btn-sm btn-danger" onClick={() => setConfirmDelete(true)}>
                 인터뷰 삭제
               </button>
             )}

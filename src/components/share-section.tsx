@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 
 import { shareAction } from "@/app/(app)/interviews/[id]/actions";
 import { SCOPE_META, SHARE_SECTION_LABEL } from "@/lib/options";
@@ -20,10 +20,10 @@ export function ShareSection({
 }) {
   const [pending, start] = useTransition();
   const [msg, setMsg] = useState("");
-  const link =
-    interview.shareEnabled && interview.shareToken && typeof window !== "undefined"
-      ? `${window.location.origin}/s/${interview.shareToken}`
-      : "";
+  // 서버 렌더와 첫 화면이 같도록 주소는 브라우저에서 붙인 뒤에 만듭니다.
+  const [origin, setOrigin] = useState("");
+  useEffect(() => setOrigin(window.location.origin), []);
+  const link = interview.shareEnabled && interview.shareToken && origin ? `${origin}/s/${interview.shareToken}` : "";
 
   function toggleShare(enabled: boolean) {
     setMsg("");
@@ -51,7 +51,7 @@ export function ShareSection({
         <h3 className="font-semibold">내부 공유 범위</h3>
         <div className="grid gap-2" role="radiogroup" aria-label="내부 공유 범위">
           {(Object.keys(SCOPE_META) as InternalScope[]).map((k) => (
-            <label key={k} className={`tile flex cursor-pointer gap-3 p-3 ${interview.internalScope === k ? "border-prism/60" : ""}`}>
+            <label key={k} className={`tile flex cursor-pointer gap-3 p-3 ${interview.internalScope === k ? "border-ink/40" : ""}`}>
               <input
                 type="radio"
                 name="internalScope"
@@ -76,7 +76,7 @@ export function ShareSection({
           <h3 className="font-semibold">고객 공유 링크</h3>
           <button
             type="button"
-            className={`btn btn-sm ${interview.shareEnabled ? "" : "btn-prism"}`}
+            className={`btn btn-sm ${interview.shareEnabled ? "" : "btn-primary"}`}
             onClick={() => toggleShare(!interview.shareEnabled)}
             disabled={readOnly || pending}
           >

@@ -2,38 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 플랜더 웍스와 같은 계열: 모노크롬 글래스 + 프리즘 블루 강조. 기본은 다크, .light 클래스로 라이트 */
+/*
+ * PLANDER 디자인 시스템 (design.plander.io v1.0) 의 제품 UI 기준.
+ * 다크 #050505, 라이트 #F8FAFD, 유리 면 rgba(255,255,255,.06) + blur 24px, 반경 16px,
+ * 프리즘 블루 hsl(222 100% 62%) 는 신호(포커스, 선택 점, 진행)로만 씁니다. 따뜻한 색은 쓰지 않습니다.
+ */
 @layer base {
   :root {
-    --canvas: 0 0% 3%;
-    --ink: 0 0% 100%;
-    --sub: 0 0% 64%;
+    --canvas: 0 0% 2%;       /* #050505 */
+    --ink: 40 13% 95%;       /* #F3F2EE 밤 위 글 */
+    --sub: 0 0% 65%;         /* #A6A6A6 설명, 라벨 */
     --mute: 0 0% 44%;
-    --prism: 222 100% 66%;
+    --prism: 222 100% 62%;
+    --prism-violet: 258 92% 66%;
+    --prism-cyan: 190 95% 58%;
     --danger: 0 100% 68%;
     --warning: 41 58% 63%;
     --success: 129 54% 67%;
-    --card: rgba(255, 255, 255, 0.05);
-    --card-border: rgba(255, 255, 255, 0.11);
-    --tile: rgba(255, 255, 255, 0.035);
+    --card: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.12);
+    --tile: rgba(255, 255, 255, 0.03);
     --field: rgba(255, 255, 255, 0.04);
-    --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    --shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
     color-scheme: dark;
   }
   :root.light {
-    --canvas: 220 20% 97%;
-    --ink: 222 30% 10%;
-    --sub: 220 10% 38%;
-    --mute: 220 8% 55%;
-    --prism: 222 85% 50%;
+    --canvas: 216 50% 98%;   /* #F8FAFD */
+    --ink: 240 8% 5%;        /* #0B0B0D */
+    --sub: 226 6% 38%;       /* #5C5F68 */
+    --mute: 226 5% 52%;
+    --prism: 222 85% 52%;
     --danger: 0 72% 50%;
-    --warning: 36 80% 38%;
-    --success: 145 60% 32%;
-    --card: rgba(255, 255, 255, 0.86);
-    --card-border: rgba(15, 25, 45, 0.1);
-    --tile: rgba(15, 25, 45, 0.03);
+    --warning: 38 70% 36%;
+    --success: 140 55% 30%;
+    --card: rgba(255, 255, 255, 0.78);
+    --card-border: rgba(11, 11, 13, 0.1);
+    --tile: rgba(11, 11, 13, 0.025);
     --field: #ffffff;
-    --shadow: 0 10px 30px rgba(20, 30, 60, 0.07);
+    --shadow: 0 8px 30px rgba(15, 25, 50, 0.06);
     color-scheme: light;
   }
   html { -webkit-text-size-adjust: 100%; }
@@ -42,25 +49,44 @@
     color: hsl(var(--ink));
     font-family: theme("fontFamily.sans");
     word-break: keep-all;
-    line-height: 1.6;
+    line-height: 1.65;
   }
-  ::selection { background: hsl(var(--prism) / 0.35); }
+  h1, h2, h3 { text-wrap: balance; letter-spacing: -0.02em; }
+  ::selection { background: hsl(var(--prism) / 0.4); color: hsl(var(--ink)); }
   input, textarea, select, button { font: inherit; color: inherit; }
-  :focus-visible { outline: 2px solid hsl(var(--prism)); outline-offset: 2px; }
+  /* 포커스: 1px 프리즘, 간격 4px */
+  :focus-visible { outline: 1px solid hsl(var(--prism)); outline-offset: 4px; border-radius: 4px; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+  }
 }
 
 @layer components {
+  /* 필름 그레인 3.5% */
+  .grain {
+    pointer-events: none; position: fixed; inset: 0; z-index: 99; opacity: 0.035;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  /* 프리즘 앰비언트: 화면에 한 곳만 아주 옅게 */
+  .ambient {
+    pointer-events: none; position: fixed; z-index: 0; top: -18%; right: -10%;
+    width: 560px; height: 560px; border-radius: 999px; filter: blur(120px); opacity: 0.16;
+    background: radial-gradient(circle, hsl(var(--prism)) 0%, hsl(var(--prism-violet)) 45%, transparent 70%);
+  }
+  :root.light .ambient { opacity: 0.08; }
+
   .card {
     background: var(--card);
     border: 1px solid var(--card-border);
-    border-radius: 20px;
+    border-radius: 16px;
     box-shadow: var(--shadow);
-    backdrop-filter: blur(18px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
   }
   .tile {
     background: var(--tile);
     border: 1px solid hsl(var(--ink) / 0.08);
-    border-radius: 14px;
+    border-radius: 12px;
   }
   .field {
     width: 100%;
@@ -69,37 +95,62 @@
     border: 1px solid hsl(var(--ink) / 0.14);
     border-radius: 10px;
     padding: 9px 12px;
-    font-size: 14.5px;
+    font-size: 16px; /* 휴대폰에서 확대되지 않게 */
+    transition: border-color .3s var(--ease), box-shadow .3s var(--ease);
   }
+  @media (min-width: 640px) { .field { font-size: 14.5px; } }
   .field::placeholder { color: hsl(var(--mute)); }
-  .field:focus { outline: none; border-color: hsl(var(--prism)); box-shadow: 0 0 0 3px hsl(var(--prism) / 0.18); }
+  .field:focus { outline: none; border-color: hsl(var(--prism) / 0.8); box-shadow: 0 0 0 3px hsl(var(--prism) / 0.15); }
   textarea.field { min-height: 92px; resize: vertical; }
   .label { font-size: 12.5px; color: hsl(var(--sub)); font-weight: 500; }
+  /* 영문 라벨: 11px, 자간 0.12em, 대문자 */
+  .eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--sub)); font-weight: 500; }
+  .index { font-family: theme("fontFamily.num"); font-size: 12px; letter-spacing: 0.06em; color: hsl(var(--mute)); }
+
+  /* 알약 버튼: 1px 테두리, 올리면 채워짐. 채운 버튼은 반대로 */
   .btn {
     display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 600;
-    border: 1px solid hsl(var(--ink) / 0.15); background: hsl(var(--ink) / 0.04);
-    transition: background .15s, border-color .15s; white-space: nowrap; cursor: pointer;
+    border-radius: 999px; padding: 9px 18px; font-size: 13.5px; font-weight: 500; letter-spacing: 0.01em;
+    border: 1px solid hsl(var(--ink) / 0.22); background: transparent; color: hsl(var(--ink));
+    transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease);
+    white-space: nowrap; cursor: pointer;
   }
-  .btn:hover { background: hsl(var(--ink) / 0.09); }
-  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn:hover:not(:disabled) { background: hsl(var(--ink)); color: hsl(var(--canvas)); border-color: hsl(var(--ink)); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
   .btn-primary { background: hsl(var(--ink)); color: hsl(var(--canvas)); border-color: hsl(var(--ink)); }
-  .btn-primary:hover { background: hsl(var(--ink) / 0.86); }
-  .btn-prism { background: hsl(var(--prism)); color: #fff; border-color: hsl(var(--prism)); }
-  .btn-prism:hover { background: hsl(var(--prism) / 0.88); }
-  .btn-sm { padding: 6px 11px; font-size: 13px; border-radius: 8px; }
+  .btn-primary:hover:not(:disabled) { background: transparent; color: hsl(var(--ink)); }
+  .btn-sm { padding: 6px 13px; font-size: 12.5px; }
+  .btn-danger { color: hsl(var(--danger)); border-color: hsl(var(--danger) / 0.4); }
+  .btn-danger:hover:not(:disabled) { background: hsl(var(--danger)); color: hsl(var(--canvas)); border-color: hsl(var(--danger)); }
+  /* 글 링크: 아래 1px 선, 올리면 프리즘 */
+  .text-link { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: hsl(var(--ink) / 0.3); transition: color .3s var(--ease); }
+  .text-link:hover { color: hsl(var(--prism)); text-decoration-color: currentColor; }
+
   .chip {
     display: inline-flex; align-items: center; gap: 6px; border-radius: 999px;
-    padding: 3px 10px; font-size: 12px; font-weight: 600;
+    padding: 3px 10px; font-size: 12px; font-weight: 500;
     border: 1px solid hsl(var(--ink) / 0.15); background: hsl(var(--ink) / 0.04); color: hsl(var(--sub));
   }
+  .dot { width: 6px; height: 6px; border-radius: 999px; background: currentColor; flex: none; }
+
+  /* 선택 칩: 선택되면 흑백 반전. 면을 프리즘으로 채우지 않습니다 */
   .toggle-chip {
-    display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 7px 13px;
-    font-size: 13.5px; border: 1px solid hsl(var(--ink) / 0.14); background: var(--field); cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 7px 14px;
+    font-size: 13.5px; border: 1px solid hsl(var(--ink) / 0.16); background: transparent; cursor: pointer;
+    transition: background-color .3s var(--ease), color .3s var(--ease), border-color .3s var(--ease);
   }
-  .toggle-chip[aria-pressed="true"] {
-    border-color: hsl(var(--prism)); background: hsl(var(--prism) / 0.14); font-weight: 600;
-  }
+  .toggle-chip:hover:not(:disabled) { border-color: hsl(var(--ink) / 0.45); }
+  .toggle-chip[aria-pressed="true"] { background: hsl(var(--ink)); color: hsl(var(--canvas)); border-color: hsl(var(--ink)); font-weight: 500; }
+  .toggle-chip[aria-pressed="true"] .text-mute { color: hsl(var(--canvas) / 0.6); }
+  .toggle-chip:disabled { cursor: default; }
+
   .num { font-family: theme("fontFamily.num"); font-variant-numeric: tabular-nums; }
-  .section-title { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+  .section-title { font-size: 19px; font-weight: 600; letter-spacing: -0.03em; }
+
+  /* 워드마크: PNG 를 마스크로 써서 글자색(흑 또는 백)을 따라갑니다 */
+  .wordmark {
+    display: inline-block; height: 1em; aspect-ratio: 600 / 163; background: currentColor;
+    -webkit-mask: url(/brand/plander-wordmark.png) center / contain no-repeat;
+    mask: url(/brand/plander-wordmark.png) center / contain no-repeat;
+  }
 }
