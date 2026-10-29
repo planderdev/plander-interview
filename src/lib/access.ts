@@ -1,0 +1,53 @@
+import type { Interview, Member, SharedInterview } from "./types";
+
+/**
+ * 내부 공유 범위. supabase/migrations 의 pi_can_view 와 같은 판단을 해야 합니다.
+ * 한쪽을 고치면 다른 쪽도 고칩니다.
+ */
+export function canView(i: Interview, me: Member): boolean {
+  if (me.role === "super_admin") return true;
+  const involved = i.createdBy === me.id || i.participantIds.includes(me.id);
+  if (i.internalScope === "team") return true;
+  if (i.internalScope === "operators") return involved || me.role === "operator";
+  return involved;
+}
+
+/** 볼 수 있는 사람 중 작성자, 참석자, 운영자 이상만 고칩니다. */
+export function canEdit(i: Interview, me: Member): boolean {
+  if (!canView(i, me)) return false;
+  return me.role !== "user" || i.createdBy === me.id || i.participantIds.includes(me.id);
+}
+
+/** 고객 공유 링크에 내려갈 정보. 내부 메모, 외부 협력, 연락처, 위험 요소는 넣지 않습니다. */
+export function toShared(i: Interview): SharedInterview {
+  const s = i.shareSections;
+  return {
+    title: i.title,
+    clientName: i.clientName,
+    heldAt: i.heldAt,
+    counterpartNames: i.counterparts.map((c) => [c.name, c.title].filter(Boolean).join(" ")).filter(Boolean),
+    sections: s,
+    business: s.business ? i.business : undefined,
+    needs: s.needs ? i.needs : undefined,
+    summary: s.summary ? i.summary.external : undefined,
+    planderItems: s.plander || s.estimate ? i.planderItems : undefined,
+    nextActions: s.nextActions ? i.summary.nextActions.map((a) => ({ text: a.text, due: a.due })) : undefined,
+    updatedAt: i.updatedAt,
+  };
+}
+
+/** 의뢰 전환 준비 정도 */
+export function readiness(i: Interview) {
+  const items = [
+    { label: "상대측 미팅자 기록", ok: i.counterparts.some((c) => c.name.trim()) },
+    { label: "고객 업종 기록", ok: Boolean(i.business.industry) },
+    { label: "원하는 일 기록", ok: i.needs.goals.length > 0 || Boolean(i.needs.wish.trim()) },
+    { label: "플랜더 항목 1개 이상", ok: i.planderItems.length > 0 },
+    { label: "요약 작성", ok: Boolean(i.summary.oneline.trim()) },
+    { label: "결정권자와 이야기함", ok: i.check.decisionMaker },
+    { label: "예산 범위 확인", ok: i.check.budget },
+    { label: "시작 시점 확인", ok: i.check.timeline },
+    { label: "할 일 범위 공감", ok: i.check.scope },
+  ];
+  return { items, done: items.filter((x) => x.ok).length, total: items.length };
+}

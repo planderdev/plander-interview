@@ -1,0 +1,286 @@
+import "server-only";
+
+import { cache } from "react";
+
+import { canEdit, canView, toShared } from "./access";
+import { MOCK_MEMBERS, mockDb, mockMe } from "./mock";
+import { defaultSections, emptyBusiness, emptyCheck, emptyNeeds, emptySummary } from "./options";
+import { RPC, TABLES, isSupabaseConfigured } from "./supabase/config";
+import { createSupabaseServerClient } from "./supabase/server";
+import type { ClientOption, Interview, Member, SharedInterview } from "./types";
+
+/* ------------------------------------------------------------------ */
+/* DB 행 <-> Interview                                                  */
+/* ------------------------------------------------------------------ */
+
+type Row = Record<string, unknown>;
+
+function fromRow(r: Row): Interview {
+  return {
+    id: r.id as string,
+    title: (r.title as string) ?? "",
+    status: (r.status as Interview["status"]) ?? "draft",
+    heldAt: (r.held_at as string | null)?.slice(0, 16) ?? "",
+    place: (r.place as string) ?? "",
+    method: (r.method as string) ?? "",
+    clientName: (r.client_name as string) ?? "",
+    counterparts: (r.counterparts as Interview["counterparts"]) ?? [],
+    business: { ...emptyBusiness(), ...((r.business as object) ?? {}) },
+    needs: { ...emptyNeeds(), ...((r.needs as object) ?? {}) },
+    planderItems: (r.plander_items as Interview["planderItems"]) ?? [],
+    partnerItems: (r.partner_items as Interview["partnerItems"]) ?? [],
+    summary: { ...emptySummary(), ...((r.summary as object) ?? {}) },
+    participantIds: (r.participant_ids as string[]) ?? [],
+    internalScope: (r.internal_scope as Interview["internalScope"]) ?? "team",
+    shareEnabled: Boolean(r.share_enabled),
+    shareToken: (r.share_token as string | null) ?? null,
+    shareSections: { ...defaultSections(), ...((r.share_sections as object) ?? {}) },
+    check: { ...emptyCheck(), ...((r.conversion_check as object) ?? {}) },
+    clientId: (r.client_id as string | null) ?? null,
+    projectId: (r.project_id as string | null) ?? null,
+    convertedAt: (r.converted_at as string | null) ?? null,
+    createdBy: r.created_by as string,
+    updatedBy: (r.updated_by as string | null) ?? null,
+    createdAt: r.created_at as string,
+    updatedAt: r.updated_at as string,
+  };
+}
+
+/** 화면에서 고칠 수 있는 칸만 DB 행으로 옮깁니다. 전환 결과, 공유 토큰, 작성자는 여기서 바꾸지 않습니다. */
+function toEditableRow(i: Interview): Row {
+  return {
+    title: i.title,
+    status: i.status === "converted" ? undefined : i.status,
+    held_at: i.heldAt || null,
+    place: i.place,
+    method: i.method,
+    client_name: i.clientName,
+    counterparts: i.counterparts,
+    business: i.business,
+    needs: i.needs,
+    plander_items: i.planderItems,
+    partner_items: i.partnerItems,
+    summary: i.summary,
+    participant_ids: i.participantIds,
+    internal_scope: i.internalScope,
+    share_sections: i.shareSections,
+    conversion_check: i.check,
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* 사용자                                                               */
+/* ------------------------------------------------------------------ */
+
+export const getMe = cache(async (): Promise<Member | null> => {
+  const sb = await createSupabaseServerClient();
+  if (!sb) return mockMe();
+  const { data: auth } = await sb.auth.getUser();
+  if (!auth.user) return null;
+  const { data } = await sb
+    .from(TABLES.users)
+    .select("id,name,role,position,team,is_active")
+    .eq("id", auth.user.id)
+    .maybeSingle();
+  if (!data || data.is_active === false) return null;
+  return { id: data.id, name: data.name, role: data.role, position: data.position ?? "", team: data.team ?? "" };
+});
+
+export const listMembers = cache(async (): Promise<Member[]> => {
+  const sb = await createSupabaseServerClient();
+  if (!sb) return MOCK_MEMBERS;
+  const { data } = await sb
+    .from(TABLES.users)
+    .select("id,name,role,position,team,is_active,sort_order")
+    .eq("is_active", true)
+    .order("sort_order", { ascending: true, nullsFirst: false })
+    .order("name");
+  return (data ?? []).map((u) => ({ id: u.id, name: u.name, role: u.role, position: u.position ?? "", team: u.team ?? "" }));
+});
+
+export async function listClients(): Promise<ClientOption[]> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) return mockDb().clients;
+  const { data } = await sb.from(TABLES.clients).select("id,name").eq("is_archived", false).order("name");
+  return (data ?? []) as ClientOption[];
+}
+
+/* ------------------------------------------------------------------ */
+/* 인터뷰                                                               */
+/* ------------------------------------------------------------------ */
+
+export async function listInterviews(me: Member): Promise<Interview[]> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    return mockDb()
+      .interviews.filter((i) => canView(i, me))
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  }
+  // 볼 수 있는 행은 RLS(pi_can_view)가 거릅니다.
+  const { data, error } = await sb.from(TABLES.interviews).select("*").order("updated_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []).map(fromRow);
+}
+
+export async function getInterview(me: Member, id: string): Promise<Interview | null> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    const i = mockDb().interviews.find((x) => x.id === id);
+    return i && canView(i, me) ? structuredClone(i) : null;
+  }
+  const { data } = await sb.from(TABLES.interviews).select("*").eq("id", id).maybeSingle();
+  return data ? fromRow(data) : null;
+}
+
+/** 미팅 일시는 한국 시각 그대로 저장합니다. (예: 2026-10-29T14:00) */
+function kstNow(): string {
+  return new Date(Date.now() + 9 * 3600_000).toISOString().slice(0, 16);
+}
+
+export async function createInterview(me: Member): Promise<string> {
+  const title = "새 인터뷰";
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    const at = new Date().toISOString();
+    const id = `i-${crypto.randomUUID().slice(0, 8)}`;
+    mockDb().interviews.unshift({
+      id, title, status: "draft", heldAt: kstNow(), place: "", method: "대면", clientName: "",
+      counterparts: [], business: emptyBusiness(), needs: emptyNeeds(), planderItems: [], partnerItems: [],
+      summary: emptySummary(), participantIds: [me.id], internalScope: "team", shareEnabled: false,
+      shareToken: null, shareSections: defaultSections(), check: emptyCheck(), clientId: null, projectId: null,
+      convertedAt: null, createdBy: me.id, updatedBy: me.id, createdAt: at, updatedAt: at,
+    });
+    return id;
+  }
+  const { data, error } = await sb
+    .from(TABLES.interviews)
+    .insert({ title, created_by: me.id, updated_by: me.id, participant_ids: [me.id], held_at: kstNow() })
+    .select("id")
+    .single();
+  if (error) throw new Error(error.message);
+  return data.id as string;
+}
+
+export async function saveInterview(me: Member, next: Interview): Promise<{ updatedAt: string }> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    const db = mockDb();
+    const idx = db.interviews.findIndex((x) => x.id === next.id);
+    if (idx < 0 || !canEdit(db.interviews[idx], me)) throw new Error("이 인터뷰를 고칠 권한이 없습니다.");
+    const cur = db.interviews[idx];
+    const updatedAt = new Date().toISOString();
+    db.interviews[idx] = {
+      ...next,
+      status: cur.status === "converted" ? "converted" : next.status,
+      shareEnabled: cur.shareEnabled,
+      shareToken: cur.shareToken,
+      clientId: cur.clientId,
+      projectId: cur.projectId,
+      convertedAt: cur.convertedAt,
+      createdBy: cur.createdBy,
+      createdAt: cur.createdAt,
+      updatedBy: me.id,
+      updatedAt,
+    };
+    return { updatedAt };
+  }
+  const { data, error } = await sb
+    .from(TABLES.interviews)
+    .update({ ...toEditableRow(next), updated_by: me.id })
+    .eq("id", next.id)
+    .select("updated_at")
+    .single();
+  if (error) throw new Error(error.message);
+  return { updatedAt: data.updated_at as string };
+}
+
+export async function deleteInterview(me: Member, id: string): Promise<void> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    const db = mockDb();
+    const i = db.interviews.find((x) => x.id === id);
+    if (!i || !(i.createdBy === me.id || me.role !== "user")) throw new Error("삭제 권한이 없습니다.");
+    db.interviews = db.interviews.filter((x) => x.id !== id);
+    return;
+  }
+  const { error } = await sb.from(TABLES.interviews).delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
+/** 고객 공유 링크를 켜거나 끕니다. 다시 켜면 새 주소를 만들어 예전 링크는 열리지 않습니다. */
+export async function setShare(me: Member, id: string, enabled: boolean): Promise<string | null> {
+  const token = enabled ? crypto.randomUUID().replace(/-/g, "") : null;
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    const i = mockDb().interviews.find((x) => x.id === id);
+    if (!i || !canEdit(i, me)) throw new Error("공유 설정을 바꿀 권한이 없습니다.");
+    i.shareEnabled = enabled;
+    i.shareToken = token;
+    return token;
+  }
+  const { error } = await sb
+    .from(TABLES.interviews)
+    .update({ share_enabled: enabled, share_token: token, updated_by: me.id })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+  return token;
+}
+
+/** 로그인 없이 공유 링크로 엽니다. DB에서는 보안 함수가 고른 항목만 돌려줍니다. */
+export async function getShared(token: string): Promise<SharedInterview | null> {
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(token)) return null;
+  if (!isSupabaseConfigured()) {
+    const i = mockDb().interviews.find((x) => x.shareEnabled && x.shareToken === token);
+    return i ? toShared(i) : null;
+  }
+  const sb = await createSupabaseServerClient();
+  const { data, error } = await sb!.rpc(RPC.shared, { p_token: token });
+  if (error || !data) return null;
+  return data as SharedInterview;
+}
+
+export interface ConvertInput {
+  id: string;
+  title: string;
+  category: string;
+  budget: number | null;
+  /** 기존 웍스 클라이언트에 붙일 때 */
+  clientId: string | null;
+}
+
+/** 의뢰 전환: 웍스에 클라이언트(상담중)와 프로젝트(대기)를 만들고 인터뷰에 연결합니다. */
+export async function convertInterview(me: Member, input: ConvertInput): Promise<{ clientId: string; projectId: string }> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    const db = mockDb();
+    const i = db.interviews.find((x) => x.id === input.id);
+    if (!i || !canEdit(i, me)) throw new Error("전환 권한이 없습니다.");
+    if (i.projectId) throw new Error("이미 의뢰로 전환한 인터뷰입니다.");
+    let clientId = input.clientId;
+    if (!clientId) {
+      clientId = `cl-${crypto.randomUUID().slice(0, 8)}`;
+      db.clients.push({ id: clientId, name: i.clientName || i.title });
+    }
+    const projectId = `pj-${crypto.randomUUID().slice(0, 8)}`;
+    db.projects.push({ id: projectId, title: input.title, clientId });
+    Object.assign(i, {
+      status: "converted",
+      clientId,
+      projectId,
+      convertedAt: new Date().toISOString(),
+      updatedBy: me.id,
+      updatedAt: new Date().toISOString(),
+    });
+    return { clientId, projectId };
+  }
+  const { data, error } = await sb.rpc(RPC.convert, {
+    p_interview: input.id,
+    p_title: input.title,
+    p_category: input.category,
+    p_budget: input.budget,
+    p_client: input.clientId,
+  });
+  if (error) throw new Error(error.message);
+  const r = data as { client_id: string; project_id: string };
+  return { clientId: r.client_id, projectId: r.project_id };
+}
