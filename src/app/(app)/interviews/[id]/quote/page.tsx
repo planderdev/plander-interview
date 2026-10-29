@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { Crumbs } from "@/components/crumbs";
 import { PdfButton } from "@/components/pdf-button";
 import { FitA4 } from "@/components/fit-a4";
 import { QuoteDocument } from "@/components/quote-document";
@@ -35,7 +36,7 @@ export default async function QuotePreviewPage({ params }: { params: Promise<{ i
     <div className={`grid gap-4 ${unlocked ? "" : "pdf-locked"}`}>
       <p className="print-lock-note">견적서를 PDF로 뽑으려면 화면의 PDF로 뽑기 버튼을 누르고 비밀번호를 입력해 주세요.</p>
       <div className="no-print flex flex-wrap items-center gap-2">
-        <Link href={`/interviews/${iv.id}#plander`} className="text-link text-sm text-sub">인터뷰로 돌아가기</Link>
+        <Crumbs items={[{ label: "인터뷰 목록", href: "/interviews" }, { label: iv.title || "제목 없는 인터뷰", href: `/interviews/${iv.id}` }, { label: "견적서" }]} />
         <span className="text-xs text-mute">
           {customerReady
             ? "고객 공유 페이지의 견적서 보기 버튼으로 고객도 같은 견적서를 봅니다."

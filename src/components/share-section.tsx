@@ -14,9 +14,12 @@ export function ShareSection({
   onChange,
   onShareChange,
   flush,
+  onOpenBrief,
   readOnly,
 }: {
   interview: Interview;
+  /** 저장한 뒤 같은 탭에서 내부 공유 페이지를 엽니다 */
+  onOpenBrief: () => void;
   onChange: (patch: Partial<Interview>) => void;
   onShareChange: (enabled: boolean, token: string | null, updatedAt: string) => void;
   /** 링크를 바꾸기 전에 저장 대기 중인 변경을 먼저 저장합니다. */
@@ -81,7 +84,16 @@ export function ShareSection({
             연락처, 외부 협력, 내부 메모까지 모두 담긴 읽기 전용 페이지입니다. 위에서 고른 범위 밖의 구성원에게는 열리지 않습니다.
           </span>
           <div className="flex flex-wrap gap-2">
-            <a className="btn btn-sm" href={`/interviews/${interview.id}/brief`} target="_blank" rel="noreferrer">내부 페이지 열기</a>
+            <a
+              className="btn btn-sm"
+              href={`/interviews/${interview.id}/brief`}
+              onClick={(e) => {
+                e.preventDefault();
+                onOpenBrief();
+              }}
+            >
+              내부 페이지 열기
+            </a>
             <CopyButton path={`/interviews/${interview.id}/brief`} label="내부 링크 복사" />
           </div>
         </div>

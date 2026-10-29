@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { Crumbs } from "@/components/crumbs";
 import { PrintButton } from "@/components/print-button";
 import { readiness } from "@/lib/access";
 import { CATALOG, CATALOG_ITEM } from "@/lib/catalog";
@@ -136,7 +137,7 @@ export default async function ProposalPage({ params }: { params: Promise<{ id: s
   return (
     <div className="grid gap-4">
       <div className="no-print flex flex-wrap items-center gap-2">
-        <Link href={`/interviews/${iv.id}`} className="text-link text-sm text-sub">인터뷰로 돌아가기</Link>
+        <Crumbs items={[{ label: "인터뷰 목록", href: "/interviews" }, { label: iv.title || "제목 없는 인터뷰", href: `/interviews/${iv.id}` }, { label: "전략 제안서" }]} />
         <span className="text-xs text-mute">내부 검토용 문서입니다. 인터뷰를 고치면 이 문서도 바로 바뀝니다.</span>
         <div className="ml-auto flex gap-2">
           <Link className="btn btn-sm" href={`/interviews/${iv.id}/quote`}>견적서 보기</Link>

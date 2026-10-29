@@ -26,6 +26,7 @@ import type { Business, ClientOption, Counterpart, Interview, Member, Needs, Par
 
 import { ClientPicker } from "./client-picker";
 import { ConvertSection } from "./convert-section";
+import { Crumbs } from "./crumbs";
 import { FunnelNotes, FunnelPicker } from "./funnel-picker";
 import { PlanderSection } from "./plander-section";
 import { QuoteFields } from "./quote-fields";
@@ -137,6 +138,19 @@ export function InterviewEditor({
     update((cur) => ({ counterparts: cur.counterparts.map((c) => (c.id === id ? { ...c, ...p } : c)) }));
   const setPartner = (id: string, p: Partial<PartnerItem>) =>
     update((cur) => ({ partnerItems: cur.partnerItems.map((x) => (x.id === id ? { ...x, ...p } : x)) }));
+  /** 같은 탭에서 하위 페이지로 갑니다. 저장되지 않은 변경이 있으면 먼저 저장합니다. 뒤로 가기로 돌아올 수 있습니다. */
+  const openDoc = useCallback(
+    (path: string) => {
+      const go = () => {
+        window.location.href = `/interviews/${iv.id}/${path}`;
+      };
+      // 저장에 실패하면(충돌 포함) 옮기지 않고 이 화면에 남습니다.
+      if (state !== "saved" && !readOnly) void save().then((ok) => ok && go());
+      else go();
+    },
+    [iv.id, state, readOnly, save],
+  );
+
   /** 웍스 고객 불러오기: 비어 있는 칸만 채우고, 이미 적은 내용은 덮지 않습니다. */
   function pickClient(c: ClientOption) {
     const region = c.address.split(" ").slice(0, 2).join(" ");
@@ -198,7 +212,7 @@ export function InterviewEditor({
       <div className="grid min-w-0 gap-5">
         {/* 머리글 */}
         <div className="flex flex-wrap items-center gap-3">
-          <a href="/interviews" className="text-link text-sm text-sub">인터뷰 목록</a>
+          <Crumbs items={[{ label: "인터뷰 목록", href: "/interviews" }, { label: iv.title || "제목 없는 인터뷰" }]} />
           {/* 문서 버튼: 저장되지 않은 변경이 있으면 저장한 뒤 엽니다. */}
           {(
             [
@@ -212,12 +226,8 @@ export function InterviewEditor({
               href={`/interviews/${iv.id}/${path}`}
               className={`btn btn-sm ${primary ? "btn-primary" : ""}`}
               onClick={(e) => {
-                if (state !== "saved" && !readOnly) {
-                  e.preventDefault();
-                  void save().then((ok) => {
-                    if (ok) window.location.href = `/interviews/${iv.id}/${path}`;
-                  });
-                }
+                e.preventDefault();
+                openDoc(path);
               }}
             >
               {label}
@@ -484,6 +494,7 @@ export function InterviewEditor({
           />
           <QuoteFields
             interview={iv}
+            onOpenQuote={() => openDoc("quote")}
             ownerName={nameOf(iv.createdBy)}
             onChange={(quote) => update({ quote })}
             readOnly={readOnly}
@@ -561,6 +572,7 @@ export function InterviewEditor({
         <Section id="share" no={7} title="공유 범위" desc="플랜더 안에서 누가 볼지, 고객에게 무엇을 보여 줄지 정합니다.">
           <ShareSection
             interview={iv}
+            onOpenBrief={() => openDoc("brief")}
             onChange={update}
             readOnly={readOnly}
             flush={save}
