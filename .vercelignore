@@ -1,0 +1,11 @@
+# 배포에 넣지 않는 것
+# 직인은 공개 주소로 퍼지지 않게 목업 배포에서 뺍니다.
+public/brand/plander-seal.png
+# 로컬 예시 데이터
+.local-data
+node_modules
+node_modules.nosync
+.next
+.next-dev
+.env
+.env*.local
