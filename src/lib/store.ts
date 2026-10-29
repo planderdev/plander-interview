@@ -3,7 +3,9 @@ import "server-only";
 import { cache } from "react";
 
 import { canEdit, canView, toShared } from "./access";
-import { MOCK_MEMBERS, mockDb, mockMe } from "./mock";
+import { cookies } from "next/headers";
+
+import { MOCK_MEMBERS, MOCK_USER_COOKIE, mockDb, mockMe, persistMock } from "./mock";
 import { defaultSections, emptyBusiness, emptyCheck, emptyNeeds, emptySummary } from "./options";
 import { RPC, TABLES, isSupabaseConfigured } from "./supabase/config";
 import { createSupabaseServerClient } from "./supabase/server";
@@ -76,7 +78,7 @@ function toEditableRow(i: Interview): Row {
 
 export const getMe = cache(async (): Promise<Member | null> => {
   const sb = await createSupabaseServerClient();
-  if (!sb) return mockMe();
+  if (!sb) return mockMe((await cookies()).get(MOCK_USER_COOKIE)?.value);
   const { data: auth } = await sb.auth.getUser();
   if (!auth.user) return null;
   const { data } = await sb
@@ -202,6 +204,7 @@ export async function createInterview(me: Member): Promise<string> {
       shareToken: null, shareSections: defaultSections(), check: emptyCheck(), clientId: null, projectId: null,
       convertedAt: null, createdBy: me.id, updatedBy: me.id, createdAt: at, updatedAt: at,
     });
+    persistMock();
     return id;
   }
   const { data, error } = await sb
@@ -234,6 +237,7 @@ export async function saveInterview(me: Member, next: Interview): Promise<{ upda
       updatedBy: me.id,
       updatedAt,
     };
+    persistMock();
     return { updatedAt };
   }
   const { data, error } = await sb
@@ -253,6 +257,7 @@ export async function deleteInterview(me: Member, id: string): Promise<void> {
     const i = db.interviews.find((x) => x.id === id);
     if (!i || !(i.createdBy === me.id || me.role !== "user")) throw new Error("삭제 권한이 없습니다.");
     db.interviews = db.interviews.filter((x) => x.id !== id);
+    persistMock();
     return;
   }
   const { error } = await sb.from(TABLES.interviews).delete().eq("id", id);
@@ -268,6 +273,7 @@ export async function setShare(me: Member, id: string, enabled: boolean): Promis
     if (!i || !canEdit(i, me)) throw new Error("공유 설정을 바꿀 권한이 없습니다.");
     i.shareEnabled = enabled;
     i.shareToken = token;
+    persistMock();
     return token;
   }
   const { error } = await sb
@@ -327,6 +333,7 @@ export async function convertInterview(me: Member, input: ConvertInput): Promise
       updatedBy: me.id,
       updatedAt: new Date().toISOString(),
     });
+    persistMock();
     return { clientId, projectId };
   }
   const { data, error } = await sb.rpc(RPC.convert, {

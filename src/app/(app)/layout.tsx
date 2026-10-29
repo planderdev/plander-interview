@@ -2,15 +2,17 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { logoutAction } from "@/app/login/actions";
+import { MockUserSwitch } from "@/components/mock-user-switch";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { ROLE_LABEL } from "@/lib/options";
-import { getMe } from "@/lib/store";
+import { getMe, listMembers } from "@/lib/store";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const me = await getMe();
   if (!me) redirect("/login");
   const mock = !isSupabaseConfigured();
+  const members = mock ? await listMembers() : [];
   return (
     <div className="min-h-dvh">
       <header className="sticky top-0 z-50 border-b border-line bg-canvas/70 backdrop-blur-[24px]">
@@ -23,9 +25,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </Link>
           {mock && <span className="chip"><span className="dot text-warning" aria-hidden />목업 모드</span>}
           <div className="ml-auto flex items-center gap-2 text-sm">
-            <span className="hidden text-sub sm:inline">
-              {me.name} <span className="text-mute">{ROLE_LABEL[me.role]}</span>
-            </span>
+            {mock ? (
+              <MockUserSwitch key={me.id} me={me} members={members} />
+            ) : (
+              <span className="hidden text-sub sm:inline">
+                {me.name} <span className="text-mute">{ROLE_LABEL[me.role]}</span>
+              </span>
+            )}
             <ThemeToggle />
             {!mock && (
               <form action={logoutAction}>

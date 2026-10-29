@@ -8,3 +8,4 @@ node_modules.nosync
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+.local-data

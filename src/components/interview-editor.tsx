@@ -182,6 +182,9 @@ export function InterviewEditor({
         {/* 머리글 */}
         <div className="flex flex-wrap items-center gap-3">
           <a href="/interviews" className="text-link text-sm text-sub">인터뷰 목록</a>
+          <a href={`/interviews/${iv.id}/brief`} className="btn btn-sm" onClick={(e) => { if (state !== "saved" && !readOnly) { e.preventDefault(); void save().then(() => { window.location.href = `/interviews/${iv.id}/brief`; }); } }}>
+            내부 공유 페이지
+          </a>
           <span className="chip ml-auto" role="status">
             <span
               className={`dot ${readOnly ? "text-mute" : state === "error" ? "text-danger" : state === "saved" ? "text-success" : "text-prism"}`}

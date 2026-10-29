@@ -6,7 +6,8 @@
     "dev": "next dev -p 3200",
     "build": "next build",
     "start": "next start -p 3200",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "reset:local": "node -e \"require('fs').rmSync('.local-data',{recursive:true,force:true});console.log('로컬 예시 데이터를 지웠습니다. 다음 실행 때 기본 예시로 시작합니다.')\""
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

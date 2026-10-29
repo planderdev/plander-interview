@@ -4,6 +4,8 @@ import { useEffect, useState, useTransition } from "react";
 
 import { shareAction } from "@/app/(app)/interviews/[id]/actions";
 import { SCOPE_META, SHARE_SECTION_LABEL } from "@/lib/options";
+
+import { CopyButton } from "./copy-button";
 import type { InternalScope, Interview, ShareSections } from "@/lib/types";
 
 /** 내부 공유 범위와 고객 공유 링크 */
@@ -48,7 +50,7 @@ export function ShareSection({
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="grid content-start gap-3">
-        <h3 className="font-semibold">내부 공유 범위</h3>
+        <h3 className="font-semibold">내부 공유 (플랜더용)</h3>
         <div className="grid gap-2" role="radiogroup" aria-label="내부 공유 범위">
           {(Object.keys(SCOPE_META) as InternalScope[]).map((k) => (
             <label key={k} className={`tile flex cursor-pointer gap-3 p-3 ${interview.internalScope === k ? "border-ink/40" : ""}`}>
@@ -69,11 +71,21 @@ export function ShareSection({
           ))}
         </div>
         <p className="text-xs text-mute">내부 메모와 외부 협력 내용은 내부 공유 범위 안에서만 보입니다.</p>
+        <div className="tile grid gap-2 p-3">
+          <span className="text-sm font-medium">내부 공유 페이지</span>
+          <span className="text-xs text-sub">
+            연락처, 외부 협력, 내부 메모까지 모두 담긴 읽기 전용 페이지입니다. 위에서 고른 범위 밖의 구성원에게는 열리지 않습니다.
+          </span>
+          <div className="flex flex-wrap gap-2">
+            <a className="btn btn-sm" href={`/interviews/${interview.id}/brief`} target="_blank" rel="noreferrer">내부 페이지 열기</a>
+            <CopyButton path={`/interviews/${interview.id}/brief`} label="내부 링크 복사" />
+          </div>
+        </div>
       </div>
 
       <div className="grid content-start gap-3">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="font-semibold">고객 공유 링크</h3>
+          <h3 className="font-semibold">외부 공유 (고객용)</h3>
           <button
             type="button"
             className={`btn btn-sm ${interview.shareEnabled ? "" : "btn-primary"}`}

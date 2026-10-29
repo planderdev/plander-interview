@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { defaultSections, emptyCheck } from "./options";
 import type { ClientOption, Interview, Member } from "./types";
 
@@ -127,26 +130,56 @@ interface MockDb {
 
 const g = globalThis as unknown as { __piMock?: MockDb };
 
-/** 서버 프로세스 메모리에 둡니다. 개발 서버를 다시 켜면 예시 데이터로 돌아갑니다. */
+/**
+ * 목업 데이터는 이 파일에 저장해 개발 서버를 다시 켜도 남게 합니다.
+ * 실제 DB를 연결하면(환경 변수 설정) 쓰지 않습니다. git 에 올리지 않습니다(.gitignore).
+ */
+export const MOCK_FILE = path.join(process.cwd(), ".local-data", "mock-db.json");
+
+function seedDb(): MockDb {
+  return {
+    interviews: seed(),
+    clients: [
+      client("cl-1", "예시) 바다법률사무소", { industry: "법률, 세무 등 전문직", contactName: "한샘플", email: "sample@example.com", website: "https://example.com", address: "서울특별시 중구" }),
+      client("cl-2", "예시) 제주카페", { industry: "식당, 카페", contactName: "문예시", phone: "010-0000-0001", address: "제주특별자치도 제주시 연동" }),
+      client("cl-3", "예시) 오름베이커리", { industry: "커머스", contactName: "고샘플", phone: "010-0000-0002", website: "https://example.org", address: "제주특별자치도 서귀포시" }),
+    ],
+    projects: [
+      { id: "pj-ex-1", title: "예시) 제주카페 홈페이지 제작", clientId: "cl-2", status: "completed", category: "홈페이지 제작", startDate: "2026-05-01", endDate: "2026-06-15" },
+      { id: "pj-ex-2", title: "예시) 제주카페 여름 체험단", clientId: "cl-2", status: "in_progress", category: "국내마케팅", startDate: "2026-09-01", endDate: "2026-11-30" },
+    ],
+  };
+}
+
+/** 저장 파일이 있으면 읽고, 없으면 예시 데이터로 시작합니다. */
 export function mockDb(): MockDb {
   if (!g.__piMock) {
-    g.__piMock = {
-      interviews: seed(),
-      clients: [
-        client("cl-1", "예시) 바다법률사무소", { industry: "법률, 세무 등 전문직", contactName: "한샘플", email: "sample@example.com", website: "https://example.com", address: "서울특별시 중구" }),
-        client("cl-2", "예시) 제주카페", { industry: "식당, 카페", contactName: "문예시", phone: "010-0000-0001", address: "제주특별자치도 제주시 연동" }),
-        client("cl-3", "예시) 오름베이커리", { industry: "커머스", contactName: "고샘플", phone: "010-0000-0002", website: "https://example.org", address: "제주특별자치도 서귀포시" }),
-      ],
-      projects: [
-        { id: "pj-ex-1", title: "예시) 제주카페 홈페이지 제작", clientId: "cl-2", status: "completed", category: "홈페이지 제작", startDate: "2026-05-01", endDate: "2026-06-15" },
-        { id: "pj-ex-2", title: "예시) 제주카페 여름 체험단", clientId: "cl-2", status: "in_progress", category: "국내마케팅", startDate: "2026-09-01", endDate: "2026-11-30" },
-      ],
-    };
+    let loaded: MockDb | null = null;
+    try {
+      if (fs.existsSync(MOCK_FILE)) loaded = JSON.parse(fs.readFileSync(MOCK_FILE, "utf8")) as MockDb;
+    } catch {
+      loaded = null; // 파일이 깨졌으면 예시 데이터로 다시 시작합니다.
+    }
+    g.__piMock = loaded ?? seedDb();
   }
   return g.__piMock;
 }
 
-export function mockMe(): Member {
-  const id = process.env.MOCK_USER_ID || "m1";
+/** 목업 데이터를 바꾼 뒤 부릅니다. 쓰기가 막힌 환경(배포 미리보기 등)에서는 메모리에만 둡니다. */
+export function persistMock(): void {
+  if (!g.__piMock) return;
+  try {
+    fs.mkdirSync(path.dirname(MOCK_FILE), { recursive: true });
+    fs.writeFileSync(MOCK_FILE, JSON.stringify(g.__piMock, null, 2), "utf8");
+  } catch {
+    // 파일을 못 쓰면 메모리 데이터만 유지합니다.
+  }
+}
+
+/** 목업 모드에서 화면을 볼 사람. 헤더의 "보는 사람" 선택(쿠키)이 환경 변수보다 앞섭니다. */
+export const MOCK_USER_COOKIE = "pi_mock_user";
+
+export function mockMe(cookieId?: string): Member {
+  const id = cookieId || process.env.MOCK_USER_ID || "m1";
   return MOCK_MEMBERS.find((m) => m.id === id) ?? MOCK_MEMBERS[0];
 }
