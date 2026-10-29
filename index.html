@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>플랜더 마케팅 견적 인터뷰</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+/* 레이아웃: 한 열 단계형 인터뷰, 하단 고정 합계 바, 마지막 단계는 종이 견적서 한 장 */
+:root{
+  --bg:#F2F4F7; --surface:#FFFFFF; --ink:#16202C; --muted:#5A6576; --line:#D7DDE5;
+  --accent:#1F4FD1; --accent-ink:#FFFFFF; --accent-soft:#E7EDFC;
+  --mark:#B87A00; --mark-soft:#FBF1DC; --ok:#1C7A4C; --warn:#B4471C; --warn-soft:#FBE9E1;
+  --paper:#FFFFFF; --paper-line:#C9D1DB;
+  --f-display:"Hahmlet","Nanum Myeongjo",serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E131A; --surface:#171E28; --ink:#E6EBF1; --muted:#98A3B3; --line:#2A3441;
+  --accent:#7C9BFF; --accent-ink:#0E131A; --accent-soft:#1D2845;
+  --mark:#F0B43A; --mark-soft:#3A2D10; --ok:#4CC38A; --warn:#F08A5D; --warn-soft:#3B2117;
+  --paper:#171E28; --paper-line:#334050; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0E131A; --surface:#171E28; --ink:#E6EBF1; --muted:#98A3B3; --line:#2A3441;
+  --accent:#7C9BFF; --accent-ink:#0E131A; --accent-soft:#1D2845;
+  --mark:#F0B43A; --mark-soft:#3A2D10; --ok:#4CC38A; --warn:#F08A5D; --warn-soft:#3B2117;
+  --paper:#171E28; --paper-line:#334050; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;word-break:keep-all}
+.wrap{max-width:780px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 140px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+.brand{font-family:var(--f-num);font-size:12px;letter-spacing:.18em;color:var(--accent);font-weight:500}
+header.top{display:grid;gap:8px;margin-bottom:22px}
+header.top h1{font-size:clamp(26px,5vw,34px);font-weight:700}
+.lede{color:var(--muted);margin:0;max-width:60ch}
+
+ol.steps{list-style:none;margin:6px 0 26px;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+ol.steps li{display:grid;gap:6px;font-size:12px;color:var(--muted)}
+ol.steps li::before{content:"";height:4px;border-radius:2px;background:var(--line)}
+ol.steps li.done::before,ol.steps li.now::before{background:var(--accent)}
+ol.steps li.now{color:var(--ink);font-weight:600}
+ol.steps button{all:unset;cursor:pointer}
+ol.steps button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+ol.steps .n{font-family:var(--f-num);margin-right:4px}
+
+section.step{display:grid;gap:22px}
+.step-head{display:grid;gap:4px}
+.step-head h2{font-size:22px;font-weight:700}
+.step-head p{margin:0;color:var(--muted)}
+.q{display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.q > .label{font-weight:600}
+.q .hint{font-size:13px;color:var(--muted);margin-top:-6px}
+.req{color:var(--warn);font-size:12px;margin-left:4px;font-weight:500}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field{display:grid;gap:6px;min-width:0}
+.field label{font-size:13px;color:var(--muted)}
+input[type=text],input[type=tel],input[type=number],textarea,select{
+  font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;min-width:0}
+textarea{min-height:88px;resize:vertical}
+input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.chip span{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--line);border-radius:999px;background:var(--bg);font-size:14px;cursor:pointer;transition:background .15s,border-color .15s}
+.chip input:checked + span{background:var(--accent-soft);border-color:var(--accent);color:var(--ink);font-weight:600}
+.chip input:checked + span::before{content:"✓";color:var(--accent);font-weight:700}
+.chip input:focus-visible + span{outline:2px solid var(--accent);outline-offset:2px}
+.sub{border-left:2px solid var(--accent);padding-left:12px;display:grid;gap:8px}
+.err{color:var(--warn);font-size:13px;margin:0}
+
+/* 항목 조정 */
+.notice{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--mark-soft);border:1px solid var(--mark);border-radius:var(--r);padding:12px 14px;font-size:14px}
+.cats{display:grid;gap:10px}
+details.cat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+details.cat > summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;font-weight:600}
+details.cat > summary::-webkit-details-marker{display:none}
+details.cat > summary::after{content:"+";font-family:var(--f-num);color:var(--muted);font-size:18px}
+details.cat[open] > summary::after{content:"−"}
+details.cat > summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:var(--r)}
+.cat-count{font-family:var(--f-num);font-size:12px;font-weight:500;color:var(--accent);margin-left:auto}
+.items{display:grid;border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item.on{background:color-mix(in srgb,var(--accent-soft) 55%,transparent)}
+.item .check{display:flex;gap:10px;align-items:flex-start;cursor:pointer;min-width:0}
+.item .check input{width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent);flex:none}
+.iname{font-weight:600}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.badge{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--mark-soft);color:var(--mark);font-weight:600}
+.badge.consult{background:var(--warn-soft);color:var(--warn)}
+.idesc{grid-column:1/-1;display:grid;gap:8px;padding-left:28px;font-size:13.5px;color:var(--muted)}
+.idesc select{max-width:100%;width:auto;font-size:13.5px;padding:6px 10px}
+.pnote{font-family:var(--f-num);font-size:12px}
+.amt{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-weight:500;text-align:right;white-space:nowrap}
+.amt.off{color:var(--muted)}
+.qty{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.qty button{font:inherit;width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.qty button:focus-visible{outline:2px solid var(--accent)}
+.qty input{width:76px;text-align:center;font-family:var(--f-num);padding:5px 6px}
+.qty .u{font-size:13px;color:var(--muted)}
+
+/* 하단 바 */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--surface);border-top:1px solid var(--line);
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));padding-top:12px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bar-in{max-width:780px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.total{flex:1;min-width:0;display:grid;line-height:1.25}
+.total small{font-size:12px;color:var(--muted)}
+.total strong{font-family:var(--f-num);font-size:18px;font-weight:500;font-variant-numeric:tabular-nums}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:11px 18px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.small{padding:7px 12px;font-size:13px}
+
+/* 견적서 */
+.paper{background:var(--paper);border:1px solid var(--paper-line);border-radius:4px;padding:clamp(18px,4vw,40px);display:grid;gap:22px;box-shadow:0 1px 0 var(--paper-line),0 18px 40px -28px rgba(15,25,40,.35)}
+.paper h2.doc{font-size:30px;letter-spacing:.6em;text-align:center;padding-left:.6em}
+.docmeta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-family:var(--f-num);font-size:12.5px;color:var(--muted)}
+.parties{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.party{border:1px solid var(--paper-line);border-radius:4px;padding:12px 14px;display:grid;gap:4px;font-size:14px;min-width:0}
+.party .k{font-size:11.5px;letter-spacing:.12em;color:var(--muted)}
+.party .v{font-weight:600;font-size:16px;overflow-wrap:anywhere}
+.sum-line{border-top:2px solid var(--ink);border-bottom:1px solid var(--paper-line);padding:14px 0;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;justify-content:space-between}
+.sum-line .kor{font-family:var(--f-display);font-size:19px;font-weight:700}
+.sum-line .num{font-family:var(--f-num);color:var(--muted)}
+.tbl-wrap{overflow-x:auto}
+table.lines{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
+table.lines th{font-weight:600;font-size:12px;color:var(--muted);text-align:left;border-bottom:1px solid var(--ink);padding:8px 6px}
+table.lines td{border-bottom:1px solid var(--paper-line);padding:9px 6px;vertical-align:top}
+table.lines .r{text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.lines .no{font-family:var(--f-num);color:var(--muted);width:32px}
+table.lines .d{color:var(--muted);font-size:12.5px}
+.totals{display:grid;justify-content:end}
+.totals dl{display:grid;grid-template-columns:auto auto;gap:6px 28px;margin:0;font-size:14px}
+.totals dt{color:var(--muted)}
+.totals dd{margin:0;text-align:right;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.totals .grand{font-weight:600;color:var(--ink);border-top:1px solid var(--ink);padding-top:8px;font-size:16px}
+.blk{display:grid;gap:8px}
+.blk h3{font-family:var(--f-body);font-size:13px;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.blk ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+.budget-chip{display:inline-flex;gap:6px;align-items:center;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px}
+.budget-chip.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.budget-chip.over{background:var(--warn-soft);color:var(--warn)}
+.answers{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:0;font-size:14px}
+.answers dt{color:var(--muted)}
+.answers dd{margin:0;overflow-wrap:anywhere}
+.doc-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.copied{font-size:13px;color:var(--ok)}
+textarea.fallback{font-family:var(--f-num);font-size:12px;min-height:180px}
+.empty{padding:26px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r)}
+
+@media (max-width:560px){
+  .fields,.parties{grid-template-columns:1fr}
+  ol.steps .lbl{display:none}
+  ol.steps li.now .lbl{display:inline}
+  ol.steps{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .idesc{padding-left:0}
+  .paper h2.doc{font-size:24px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+@media print{
+  .bar,ol.steps,header.top,.doc-actions,.notice{display:none!important}
+  body{background:#fff}
+  .paper{border:0;box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">PLANDER</div>
+    <h1>마케팅 견적 인터뷰</h1>
+    <p class="lede">질문에 답하시면 사업에 맞는 마케팅 항목을 추천해 드리고, 단가표 기준의 예상 견적서를 바로 만들어 드립니다. 5분 정도 걸립니다.</p>
+  </header>
+
+  <ol class="steps" id="steps"></ol>
+
+  <form id="form" novalidate>
+    <!-- 1 -->
+    <section class="step" data-step="0">
+      <div class="step-head"><h2>어떤 사업을 하고 계신가요?</h2><p>견적서 수신처에 들어가는 정보입니다.</p></div>
+      <div class="q">
+        <div class="fields">
+          <div class="field"><label for="company">회사명 또는 상호명<span class="req">필수</span></label><input type="text" id="company" name="company" autocomplete="organization" placeholder="예: 제주순대연구소"></div>
+          <div class="field"><label for="person">담당자 이름</label><input type="text" id="person" name="person" autocomplete="name" placeholder="예: 김플랜 대표"></div>
+          <div class="field"><label for="contact">연락처 또는 이메일</label><input type="text" id="contact" name="contact" autocomplete="tel" placeholder="010-0000-0000"></div>
+          <div class="field"><label for="region">지역</label><input type="text" id="region" name="region" placeholder="예: 제주 신제주, 서울 성수"></div>
+        </div>
+        <p class="err" id="err0" hidden>회사명 또는 상호명을 입력해 주세요.</p>
+      </div>
+      <div class="q">
+        <div class="label">업종</div>
+        <div class="chips" id="industry"></div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="step" data-step="1" hidden>
+      <div class="step-head"><h2>마케팅으로 무엇을 얻고 싶으세요?</h2><p>여러 개를 고르셔도 됩니다. 고르신 목표에 맞춰 항목을 추천해 드립니다.</p></div>
+      <div class="q">
+        <div class="label">목표<span class="req">1개 이상</span></div>
+        <div class="chips" id="goals"></div>
+        <div class="sub" id="foreignWrap" hidden>
+          <div class="label">어느 나라 고객을 모으고 싶으세요?</div>
+          <div class="chips" id="foreign"></div>
+        </div>
+        <p class="err" id="err1" hidden>목표를 하나 이상 골라 주세요.</p>
+      </div>
+      <div class="q">
+        <label class="label" for="worry">가장 해결하고 싶은 고민</label>
+        <div class="hint">예: 오픈한 지 3개월인데 네이버 지도에서 검색이 안 돼요.</div>
+        <textarea id="worry" name="worry"></textarea>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="step" data-step="2" hidden>
+      <div class="step-head"><h2>지금 상황과 예산을 알려 주세요</h2><p>이미 하고 계신 것은 빼고, 필요한 것만 추천해 드립니다.</p></div>
+      <div class="q"><div class="label">홈페이지</div><div class="chips" id="homepage"></div></div>
+      <div class="q"><div class="label">네이버 플레이스(지도) 등록</div><div class="chips" id="place"></div></div>
+      <div class="q"><div class="label">지금 직접 운영하고 있는 채널</div><div class="chips" id="channels"></div></div>
+      <div class="q"><div class="label">디자인이나 촬영이 필요한 것</div><div class="chips" id="branding"></div></div>
+      <div class="q"><div class="label">한 달 마케팅 예산</div><div class="hint">광고 매체비(광고비 충전금)는 빼고 생각해 주세요.</div><div class="chips" id="budget"></div></div>
+      <div class="q"><div class="label">진행 기간</div><div class="chips" id="months"></div></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="step" data-step="3" hidden>
+      <div class="step-head"><h2>추천 항목을 확인해 주세요</h2><p>체크를 끄거나 켜고, 단계와 수량을 바꾸면 금액이 바로 바뀝니다. 다른 항목도 펼쳐서 추가하실 수 있습니다.</p></div>
+      <div class="notice" id="reNotice" hidden><span>답변이 바뀌었습니다. 바뀐 답변에 맞춰 다시 추천받을 수 있습니다.</span><button type="button" class="btn small" id="reRec">다시 추천받기</button></div>
+      <div class="cats" id="cats"></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="step" data-step="4" hidden>
+      <div class="step-head"><h2>예상 견적서</h2><p>단가표 기준으로 계산한 예상 금액입니다. 내용을 복사해 플랜더 담당자에게 보내 주시면 상담 후 확정 견적을 드립니다.</p></div>
+      <div id="doc"></div>
+    </section>
+  </form>
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <button type="button" class="btn" id="prev">이전</button>
+    <div class="total"><small id="totalLabel">예상 견적 (부가세 포함)</small><strong id="totalNum">0원</strong></div>
+    <button type="button" class="btn primary" id="next">다음</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- 선택지 ---------- */
+const OPT = {
+  industry:[["food","식당, 카페"],["beauty","뷰티, 병원"],["pro","법률, 세무 등 전문직"],["shop","쇼핑몰, 제품 판매"],["stay","숙박, 체험, 관광"],["store","로드샵, 매장 판매"],["org","협회, 단체, 기업"],["etc","기타"]],
+  goals:[["visit","매장 방문 늘리기"],["search","네이버, 구글 검색에 잘 보이기"],["sales","온라인 판매 늘리기"],["inquiry","상담, 문의 늘리기"],["sns","SNS로 브랜드 알리기"],["foreign","외국인 관광객 모으기"]],
+  foreign:[["china","중국"],["japan","일본"]],
+  homepage:[["none","없음"],["have","있음"],["renew","있지만 리뉴얼 필요"]],
+  place:[["yes","등록되어 있음"],["no","아직 안 함"],["na","해당 없음 (온라인 사업)"]],
+  channels:[["blog","네이버 블로그"],["insta","인스타그램"],["youtube","유튜브"],["ads","광고 집행 중"],["nothing","아무것도 안 함"]],
+  branding:[["leaflet","브랜드 리플렛"],["package","패키지 디자인"],["sticker","스티커"],["photo","사진 촬영"],["video","영상 촬영"],["nobrand","필요 없음"]],
+  budget:[["b1","100만 원 이하"],["b3","100~300만 원"],["b5","300~500만 원"],["b9","500만 원 이상"],["bx","아직 모르겠음"]],
+  months:[["1","1개월"],["3","3개월"],["6","6개월"]]
+};
+const BUDGET_CAP = {b1:1000000,b3:3000000,b5:5000000};
+const RADIO = new Set(["industry","homepage","place","budget","months"]);
+const label = (k,v)=> (OPT[k].find(o=>o[0]===v)||[,""])[1];
+
+/* ---------- 단가표 (공식단가표_정리.md 기준, 범위 단가는 중간값) ---------- */
+// t(단계, 내용, 단가, 단위, {q:기본수량, min:최소수량, from:시작가, r:원래 범위, consult:별도상담, m:기간만큼 반복})
+const t = (tier,desc,p,u,o)=>Object.assign({tier,desc,p,u,q:1,min:1},o||{});
+const CATS = [
+ {id:"search",name:"검색광고",items:[
+  {id:"powerlink",name:"네이버 파워링크 광고",tiers:[t("진단","계정 광고진단, 문제점과 해결방안 피드백",5000,"회"),t("BASIC","2~3개 그룹 세팅, 주력 키워드 관리",150000,"식"),t("PREMIUM","4~5개 그룹 관리, 세부와 연관 키워드까지 관리",300000,"식")]},
+  {id:"brandsearch",name:"네이버 브랜드 검색광고",tiers:[t("세팅","브랜드 키워드 검색 시 통합검색 상단에 브랜드 콘텐츠 노출 세팅",200000,"식"),t("운영대행","세팅과 월 최적화 운영",800000,"개월",{m:true})]},
+  {id:"powercontent",name:"파워컨텐츠 광고",tiers:[t("Normal","블로그 글을 검색광고로 등록해 블로그탭 광고영역 노출 (글 작성은 별도)",300000,"식")]},
+  {id:"googlead",name:"구글 검색 광고",tiers:[t("Normal","초기 세팅, 주력 키워드와 일예산 세팅",300000,"식"),t("PREMIUM","모든 타겟 키워드 추가, 전환 데이터 기반 수동 최적화",500000,"식")]}
+ ]},
+ {id:"blog",name:"네이버 블로그",items:[
+  {id:"blogops",name:"블로그 운영대행",tiers:[t("Normal","광고주 블로그 계정 관리와 활성화, 월 10건",500000,"개월",{m:true})]},
+  {id:"blogexp",name:"블로그 체험단",tiers:[t("Normal","일반 블로거 방문, 서브 키워드 노출 목표",30000,"명",{q:10,min:10}),t("PREMIUM","인플루언서 블로거 방문, 메인 키워드 노출 목표",50000,"명",{q:10,min:10})]},
+  {id:"blogdist",name:"블로그 배포 (기자단)",tiers:[t("BASIC","브랜드명 노출 목적, 이미지 제공 필수",4000,"건",{q:50,min:50}),t("Normal","준최적화 블로그, 서브 키워드 목표. 원고와 이미지를 주지 않으면 건당 1만 원 추가",50000,"건",{q:10,min:10}),t("PREMIUM","최적화 블로그, 메인 키워드 목표. 원고와 이미지를 주지 않으면 건당 1만 원 추가",70000,"건",{q:10,min:10,from:true})]},
+  {id:"blogtop",name:"블로그탭 상위노출",tiers:[t("Normal","원하는 키워드 블로그탭 1~5위, 25일 보장",700000,"키워드",{r:"50~90만 원"})]},
+  {id:"smartblock",name:"스마트블록 상위노출",tiers:[t("Normal","1페이지 원하는 블록 1~3위, 건별",450000,"건",{r:"30~60만 원"}),t("PREMIUM","1페이지 원하는 블록 1~3위, 25일 유지",1050000,"건",{r:"60~150만 원"})]},
+  {id:"blogskin",name:"블로그 홈페이지형 디자인",tiers:[t("기본","블로그 대문 스킨 제작과 세팅, 위젯 버튼 5개 이상",250000,"식",{r:"20~30만 원"})]}
+ ]},
+ {id:"place",name:"네이버 플레이스",items:[
+  {id:"placeseo",name:"플레이스 SEO 세팅",tiers:[t("Normal","텍스트마이닝으로 플레이스 정보와 키워드 세팅",350000,"식",{r:"30~40만 원"})]},
+  {id:"receipt",name:"영수증 리뷰",tiers:[t("Normal","영수증 1장으로 원하는 수량만큼 제작해 등록",5000,"건",{q:100,min:10})]},
+  {id:"placemgmt",name:"플레이스 월관리",tiers:[t("Normal","매월 순위 상승 작업, 매일 순위 체크",0,"개월",{consult:true})]},
+  {id:"placetop",name:"플레이스 상위노출 보장형",tiers:[t("PREMIUM","모바일 1페이지 1~5위, 25일 보장",0,"키워드",{consult:true})]}
+ ]},
+ {id:"cafe",name:"카페, 지식인, 언론",items:[
+  {id:"cafetop",name:"카페 인기글 상위노출",tiers:[t("Normal","인기카페탭에 원하는 원고와 이미지 노출, 25일 보장",450000,"건",{r:"30~60만 원"})]},
+  {id:"momcafe",name:"맘카페 침투 마케팅",tiers:[t("Normal","맘카페 게시글 1개와 댓글 2개",25000,"건",{q:5,min:5})]},
+  {id:"hotdeal",name:"핫딜 마케팅",tiers:[t("Normal","카페 핫딜게시판 게시글 1개",30000,"건",{q:5,min:5})]},
+  {id:"specialcafe",name:"특수카페 업로드",tiers:[t("Normal","대형 카페 게시글 1회와 댓글 2개, 3건 묶음",70000,"묶음")]},
+  {id:"kin",name:"지식인 상위노출",tiers:[t("Normal","지식인 1페이지 1~3위, 25일 보장",200000,"키워드",{from:true})]},
+  {id:"press",name:"언론보도",tiers:[t("Normal","제휴 언론사로 네이버, 다음에 기사 송출. 언론사마다 금액이 다릅니다",0,"건",{consult:true})]}
+ ]},
+ {id:"sns",name:"인스타그램, 메타 광고",items:[
+  {id:"instaops",name:"인스타 운영대행",tiers:[t("Normal","월 8회 게시 (정보, 홍보글 6회와 릴스 2회)",800000,"개월",{m:true,from:true})]},
+  {id:"reels",name:"릴스 콘텐츠 제작 올인원",tiers:[t("Normal","기획, 촬영, 편집, 업로드까지",300000,"건",{q:4})]},
+  {id:"reelsexp",name:"인스타 릴스체험단",tiers:[t("Normal","방문 또는 배송 체험 영상을 편집해 릴스 업로드, 10건 묶음",400000,"묶음")]},
+  {id:"instaexp",name:"인스타 체험단",tiers:[t("Normal","업종 관련 1만 팔로워 이상, 게시물 사진 10장, 10명 묶음",300000,"묶음")]},
+  {id:"instatop",name:"인스타 노출",tiers:[t("Normal","해시태그 인기게시물 1~9위 보장",500000,"키워드",{from:true})]},
+  {id:"metaopt",name:"메타 광고 최적화 세팅",tiers:[t("Normal","인스타그램, 페이스북 광고 계정과 타겟 세팅",200000,"식")]},
+  {id:"metaops",name:"메타 광고 운영대행",tiers:[t("Normal","광고 소재와 타겟 운영, 리타게팅. 광고비는 별도",1200000,"개월",{m:true})]}
+ ]},
+ {id:"seo",name:"홈페이지 SEO, 성과 측정",items:[
+  {id:"webseo",name:"홈페이지 SEO 최적화 세팅",tiers:[t("Normal","검색엔진 웹마스터 도구, 애널리틱스 등록 등 기술 SEO 전반",900000,"식",{r:"80~100만 원"})]},
+  {id:"googleseo",name:"구글 검색 최적화",tiers:[t("Normal","구글 검색 노출을 위한 콘텐츠와 구조 최적화",800000,"식")]},
+  {id:"webtop",name:"웹사이트 상위노출",tiers:[t("Normal","웹사이트 영역 순위 상승 작업",300000,"식",{from:true}),t("보장형","웹사이트 영역 1~4위 보장 (PC, 모바일)",500000,"키워드",{from:true})]},
+  {id:"conversion",name:"홈페이지 정비와 상담 전환측정 구축",tiers:[t("Normal","문의 버튼, 전화, 폼 전환을 측정하도록 세팅",1500000,"식")]},
+  {id:"report",name:"상담 성과 관리와 통합 리포트",tiers:[t("Normal","채널별 성과를 모아 월간 리포트 제공",300000,"식")]}
+ ]},
+ {id:"shop",name:"쇼핑몰",items:[
+  {id:"shopad",name:"네이버 쇼핑검색광고",tiers:[t("진단","쇼핑광고 계정 진단",5000,"회"),t("BASIC","기본 세팅, 노출 키워드와 입찰가 관리",100000,"식"),t("PREMIUM","소재 5가지 분류, 순위별 입찰가 관리",300000,"식")]},
+  {id:"shopname",name:"쇼핑 상품명 SEO",tiers:[t("BASIC","상품명 노출에 맞는 키워드 조합",200000,"식")]},
+  {id:"shopreview",name:"쇼핑몰 구매평 작업",tiers:[t("Normal","키워드 검색 유입, 찜, 리뷰 (플랫폼 상관없음)",6000,"건",{q:50,min:50})]},
+  {id:"shopmain",name:"쇼핑몰 메인페이지 디자인",tiers:[t("Normal","메인페이지 디자인",300000,"페이지",{from:true})]},
+  {id:"shopdetail",name:"쇼핑몰 상세페이지 디자인",tiers:[t("Normal","상세페이지 디자인",200000,"페이지",{q:2,from:true})]},
+  {id:"banner",name:"배너, 팝업 이미지",tiers:[t("Normal","1000x500px 배너 또는 팝업",50000,"장",{from:true})]},
+  {id:"eventpage",name:"이벤트 설명 페이지",tiers:[t("Normal","1000x1500px 간단한 이벤트 페이지",50000,"페이지",{from:true})]}
+ ]},
+ {id:"local",name:"당근마켓, 카카오",items:[
+  {id:"carrot",name:"당근마켓 광고",tiers:[t("비즈니스 광고","광고 세팅, 홈페이지 등 원하는 링크로 유입",100000,"식",{from:true}),t("비즈프로필","비즈프로필 세팅과 소식 발행 광고",200000,"식",{from:true}),t("상품 판매","자사몰, 스마트스토어 카탈로그 광고 세팅",200000,"식",{from:true})]},
+  {id:"kakao",name:"카카오 광고",tiers:[t("BASIC","기존 계정 최적화 (배너가 없으면 제작비 추가)",200000,"식",{from:true}),t("Normal","신규 광고 세팅, 배너 제작과 승인 작업",300000,"식",{from:true})]}
+ ]},
+ {id:"web",name:"홈페이지 제작",items:[
+  {id:"homepage",name:"홈페이지 제작",tiers:[t("BASIC","간단한 랜딩페이지 (4단락 이하)",500000,"식",{from:true}),t("Normal","기능 코딩이 필요한 랜딩페이지 (5단락 이하)",1000000,"식",{from:true}),t("PREMIUM","메뉴가 다양한 홈페이지",1500000,"식",{from:true})]},
+  {id:"mallrenew",name:"쇼핑몰 리뉴얼 제작",tiers:[t("Normal","기존 쇼핑몰 디자인과 구조 리뉴얼",1500000,"식")]}
+ ]},
+ {id:"brand",name:"브랜딩, 디자인, 촬영",items:[
+  {id:"leaflet",name:"브랜드 리플렛 디자인",tiers:[t("Normal","브랜드 소개 리플렛 디자인",1500000,"식")]},
+  {id:"package",name:"패키지 디자인",tiers:[t("Normal","박스 등 패키지 디자인",1000000,"종")]},
+  {id:"sticker",name:"스티커 디자인",tiers:[t("Normal","파우치, 포장용 스티커 4종 묶음",1500000,"묶음")]},
+  {id:"retouch",name:"사진 셀렉과 보정",tiers:[t("Normal","보유 사진 선별과 보정",500000,"식")]},
+  {id:"photo",name:"블로그 배포용 대량촬영",tiers:[t("Normal","사진 1,000장 이상 촬영",300000,"회",{from:true})]},
+  {id:"placevideo",name:"플레이스 등록용 영상촬영",tiers:[t("Normal","플레이스 첫 화면 영상 30~60초",500000,"편",{from:true})]},
+  {id:"productvideo",name:"상품 영상촬영",tiers:[t("Normal","쇼핑몰 상품용 영상",300000,"편",{from:true})]},
+  {id:"print",name:"제작물 인쇄",tiers:[t("Normal","리플렛, 패키지, 스티커 인쇄. 수량과 재질에 따라 다릅니다",0,"식",{consult:true})]}
+ ]},
+ {id:"china",name:"중국 마케팅",items:[
+  {id:"dianping",name:"따중디엔핑",tiers:[t("등록","업체 등록",200000,"건"),t("스타터 3개월","등록과 관리 3개월, CPC 충전비 3,000위안 포함",1000000,"건"),t("스타터 1년","등록과 관리 1년, CPC 충전비 5,000위안 포함",2500000,"건"),t("어드밴스 3개월","관리 3개월, CPC 3,000위안, 체험단 5팀",1500000,"건"),t("어드밴스 1년","관리 1년, CPC 5,000위안, 체험단 10팀, 기자단 10팀",3500000,"건")]},
+  {id:"xhs",name:"샤오홍슈 체험단",tiers:[t("스타터","체험단 5팀",500000,"건"),t("어드밴스","체험단 5팀과 기자단 10팀",1000000,"건"),t("마스터","팔로워 1만 이상 체험단 5팀",2000000,"건")]},
+  {id:"chinafull",name:"따중디엔핑 + 샤오홍슈 풀코스",tiers:[t("풀코스","관리 3개월, 체험단 5팀 이상, 기자단 10팀, 현지 직원 1:1 관리, 메뉴판과 판촉물, 가로 영상 촬영",3000000,"건")]},
+  {id:"cnvideo",name:"따중디엔핑 영상 제작",tiers:[t("Normal","30~60초 영상",300000,"편",{from:true})]},
+  {id:"cnsub",name:"중국어 자막 추가",tiers:[t("Normal","영상 중국어 자막",100000,"편",{from:true})]},
+  {id:"cnkiosk",name:"키오스크 중국어 추가",tiers:[t("Normal","키오스크 외국어 추가 (업체 비용 별도)",50000,"건")]}
+ ]},
+ {id:"japan",name:"일본 마케팅",items:[
+  {id:"gmap",name:"구글맵 + N플레이스",tiers:[t("스타터-1","업체 등록 세팅",200000,"건"),t("스타터-2","등록, 구글애즈 3개월 (CPC 60만 원 포함)",1000000,"건"),t("스타터-3","등록, 구글애즈 1년 (CPC 100만 원 포함)",2500000,"건"),t("어드밴스-1","스타터-2에 체험단 5팀 추가",2500000,"건"),t("어드밴스-2","스타터-3에 체험단, 기자단 각 10팀 추가",3500000,"건")]},
+  {id:"jpsns",name:"인스타그램, 틱톡 체험단 (일본)",tiers:[t("스타터","체험단 5팀",800000,"건"),t("어드밴스","체험단 10팀",1200000,"건"),t("마스터","팔로워 1만 이상 체험단 5팀",2500000,"건")]},
+  {id:"gmapreview",name:"구글맵 리뷰",tiers:[t("단일","구글 리뷰 작성",4000,"건",{q:100,min:100})]},
+  {id:"japanfull",name:"일본 마케팅 풀코스",tiers:[t("풀코스","구글맵, N플레이스 등록, 구글애즈 3개월, 체험단 5팀 이상, 1:1 관리, 메뉴판과 판촉물, 가로 영상",3000000,"건")]},
+  {id:"jpdesign",name:"일본어 번역 디자인",tiers:[t("Normal","메뉴판, 간판, 배너, 이벤트 인쇄물, 설명서 (출력비 별도)",30000,"페이지",{q:2})]},
+  {id:"jpvideo",name:"숏폼 영상 제작 (일본)",tiers:[t("Normal","인스타그램, 틱톡 숏폼 30~60초",300000,"편",{from:true})]},
+  {id:"jpplatform",name:"일본 온라인 플랫폼 입점",tiers:[t("스타터","큐텐 입점, 상세페이지 월 5개",500000,"건"),t("확장형","큐텐, 아마존재팬 입점, 상세페이지 월 5개",1200000,"건"),t("뷰티상품시딩","앳코스메, 립스 등록과 리뷰 (5상품)",3000000,"건"),t("관리 및 CS","상세페이지 월 10개, 현지 CS 대행",2500000,"건"),t("라쿠텐","라쿠텐 입점, 1년 계약",11000000,"년"),t("풀셋","큐텐, 아마존재팬, 라쿠텐 입점, 1년 계약",22000000,"년")]}
+ ]}
+];
+const ITEM = {}; CATS.forEach(c=>c.items.forEach(i=>{i.cat=c.id; ITEM[i.id]=i;}));
+
+/* ---------- 상태 ---------- */
+const KEY = "plander-quote-draft-v1";
+const fresh = ()=>({company:"",person:"",contact:"",region:"",industry:"",goals:[],foreign:[],worry:"",homepage:"",place:"",channels:[],branding:[],budget:"",months:"3",sel:{},reasons:{},touched:false,recKey:"",step:0,no:""});
+let S = fresh();
+try{ const raw = localStorage.getItem(KEY); if(raw) S = Object.assign(fresh(), JSON.parse(raw)); }catch(e){}
+const save = ()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+
+const $ = s=>document.querySelector(s);
+const won = n=> n.toLocaleString("ko-KR")+"원";
+const esc = s=> String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- 선택지 그리기 ---------- */
+function drawChips(){
+  Object.keys(OPT).forEach(k=>{
+    const host = document.getElementById(k); if(!host) return;
+    const type = RADIO.has(k) ? "radio":"checkbox";
+    host.innerHTML = OPT[k].map(([v,l])=>`<label class="chip"><input type="${type}" name="${k}" value="${v}" id="${k}-${v}"><span>${l}</span></label>`).join("");
+  });
+}
+function fillForm(){
+  ["company","person","contact","region","worry"].forEach(k=>{ document.getElementById(k).value = S[k]||""; });
+  Object.keys(OPT).forEach(k=>{
+    const vals = RADIO.has(k) ? [S[k]] : S[k];
+    document.querySelectorAll(`input[name="${k}"]`).forEach(i=>{ i.checked = vals.includes(i.value); });
+  });
+  $("#foreignWrap").hidden = !S.goals.includes("foreign");
+}
+$("#form").addEventListener("input", e=>{
+  const el = e.target;
+  if(["company","person","contact","region","worry"].includes(el.id)){ S[el.id]=el.value; save(); if(el.id==="company") $("#err0").hidden = true; }
+});
+$("#form").addEventListener("change", e=>{
+  const el = e.target, k = el.name;
+  if(!OPT[k]) return;
+  if(RADIO.has(k)) S[k]=el.value;
+  else{
+    let arr = Array.from(document.querySelectorAll(`input[name="${k}"]:checked`)).map(i=>i.value);
+    // "아무것도 안 함", "필요 없음"은 다른 선택과 함께 쓰지 않는다
+    const solo = {channels:"nothing",branding:"nobrand"}[k];
+    if(solo){
+      if(el.value===solo && el.checked) arr=[solo];
+      else arr = arr.filter(v=>v!==solo);
+      document.querySelectorAll(`input[name="${k}"]`).forEach(i=>{ i.checked = arr.includes(i.value); });
+    }
+    S[k]=arr;
+  }
+  if(k==="goals"){ $("#foreignWrap").hidden = !S.goals.includes("foreign"); $("#err1").hidden = true; }
+  save(); updateTotal();
+});
+
+/* ---------- 추천 ---------- */
+function answerKey(){ return JSON.stringify([S.industry,S.goals,S.foreign,S.homepage,S.place,S.channels,S.branding,S.budget,S.months]); }
+function recommend(){
+  const sel = {}, why = {};
+  const add = (id,tierName,reason,qty)=>{
+    const it = ITEM[id]; let ti = tierName ? it.tiers.findIndex(x=>x.tier===tierName) : 0; if(ti<0) ti=0;
+    const tier = it.tiers[ti];
+    if(!sel[id]) sel[id] = {t:ti, q: qty || (tier.m ? +S.months : tier.q)};
+    (why[id] = why[id]||[]); if(!why[id].includes(reason)) why[id].push(reason);
+  };
+  const g = new Set(S.goals), ch = new Set(S.channels), br = new Set(S.branding);
+  const big = S.budget==="b5" || S.budget==="b9";
+  if(g.has("visit")){
+    const r="매장 방문";
+    if(S.place!=="na") add("placeseo",null,r);
+    if(S.place!=="na") add("receipt",null,r);
+    add("blogexp","Normal",r);
+    add("reelsexp",null,r);
+  }
+  if(g.has("search")){
+    const r="검색 노출";
+    if(!ch.has("blog")) add("blogops",null,r);
+    add("blogdist","Normal",r);
+    add("powerlink","BASIC",r);
+    add("brandsearch","세팅",r);
+    if(S.homepage!=="none") add("googleseo",null,r);
+  }
+  if(g.has("sales")){
+    const r="온라인 판매";
+    add("shopad","BASIC",r); add("shopname",null,r); add("shopdetail",null,r); add("shopreview",null,r);
+    if(big) add("metaopt",null,r);
+  }
+  if(g.has("inquiry")){
+    const r="상담, 문의";
+    if(S.homepage!=="none") add("conversion",null,r);
+    add("webseo",null,r); add("googlead","Normal",r); add("report",null,r);
+  }
+  if(g.has("sns")){
+    const r="브랜드 알리기";
+    if(!ch.has("insta")) add("instaops",null,r);
+    add("reels",null,r); add("instaexp",null,r); add("metaopt",null,r);
+  }
+  if(g.has("foreign")){
+    const fs = S.foreign.length ? S.foreign : ["china"];
+    if(fs.includes("china")){ const r="중국 고객";
+      if(big) add("chinafull",null,r); else { add("dianping","스타터 3개월",r); add("xhs","스타터",r); } }
+    if(fs.includes("japan")){ const r="일본 고객";
+      if(big) add("japanfull",null,r); else { add("gmap","스타터-2",r); add("jpsns","스타터",r); } }
+  }
+  if(S.homepage==="none") add("homepage", S.industry==="shop" ? "PREMIUM":"Normal","홈페이지 없음");
+  if(S.homepage==="renew"){ if(S.industry==="shop") add("mallrenew",null,"리뉴얼 필요"); else add("homepage","PREMIUM","리뉴얼 필요"); }
+  if(br.has("leaflet")) add("leaflet",null,"디자인 필요");
+  if(br.has("package")) add("package",null,"디자인 필요");
+  if(br.has("sticker")) add("sticker",null,"디자인 필요");
+  if(br.has("photo")) add(S.industry==="shop"?"retouch":"photo",null,"촬영 필요");
+  if(br.has("video")) add(S.industry==="shop"?"productvideo":"placevideo",null,"촬영 필요");
+  if(br.size && !br.has("nobrand") && (br.has("leaflet")||br.has("package")||br.has("sticker"))) add("print",null,"디자인 필요");
+  return {sel,why};
+}
+function applyRecommend(){
+  const r = recommend(); S.sel=r.sel; S.reasons=r.why; S.touched=false; S.recKey=answerKey(); save();
+}
+
+/* ---------- 계산 ---------- */
+function lines(){
+  const out=[];
+  CATS.forEach(c=>c.items.forEach(it=>{
+    const s=S.sel[it.id]; if(!s) return;
+    const tier=it.tiers[s.t]||it.tiers[0];
+    out.push({it,tier,q:s.q,amt: tier.consult?0:tier.p*s.q});
+  }));
+  return out;
+}
+function totals(){
+  const ls=lines(); const supply=ls.reduce((a,l)=>a+l.amt,0); const vat=Math.round(supply*0.1);
+  return {ls,supply,vat,grand:supply+vat};
+}
+function updateTotal(){
+  const t=totals();
+  $("#totalNum").textContent = won(t.grand);
+  $("#totalLabel").textContent = t.ls.length ? `예상 견적 (부가세 포함, ${t.ls.length}개 항목)` : "예상 견적 (부가세 포함)";
+}
+
+/* ---------- 항목 조정 화면 ---------- */
+let openCats = new Set();
+function priceNote(tier){
+  if(tier.consult) return "별도 상담";
+  let s = `${won(tier.p)} / ${tier.u}`;
+  if(tier.r) s += ` (단가표 ${tier.r}, 중간값)`;
+  else if(tier.from) s += "부터";
+  return s;
+}
+function drawCats(){
+  const host=$("#cats");
+  host.innerHTML = CATS.map(c=>{
+    const n = c.items.filter(i=>S.sel[i.id]).length;
+    const open = n>0 || openCats.has(c.id);
+    return `<details class="cat" data-cat="${c.id}"${open?" open":""}><summary>${c.name}<span class="cat-count">${n?n+"개 선택":""}</span></summary><div class="items">${c.items.map(rowHTML).join("")}</div></details>`;
+  }).join("");
+}
+function rowHTML(it){
+  const s=S.sel[it.id]; const on=!!s; const ti=on?s.t:0; const tier=it.tiers[ti];
+  const why=(S.reasons[it.id]||[]).map(r=>`<span class="badge">추천: ${esc(r)}</span>`).join("");
+  const consult = tier.consult ? `<span class="badge consult">별도 상담</span>`:"";
+  const tierSel = it.tiers.length>1 ? `<select id="tier-${it.id}" data-act="tier" aria-label="${esc(it.name)} 단계">${it.tiers.map((x,i)=>`<option value="${i}"${i===ti?" selected":""}>${esc(x.tier)}, ${x.consult?"별도 상담":won(x.p)}</option>`).join("")}</select>` : "";
+  const q = on?s.q:tier.q;
+  const qty = (on && !tier.consult) ? `<span class="qty"><button type="button" data-act="dec" aria-label="수량 줄이기">−</button><input type="number" inputmode="numeric" id="qty-${it.id}" data-act="qty" value="${q}" min="${tier.min}" aria-label="${esc(it.name)} 수량"><button type="button" data-act="inc" aria-label="수량 늘리기">+</button><span class="u">${esc(tier.u)}${tier.min>1?` (최소 ${tier.min})`:""}</span></span>` : "";
+  const amt = on ? (tier.consult ? `<span class="amt off">상담 후 확정</span>` : `<span class="amt">${won(tier.p*q)}</span>`) : `<span class="amt off">${tier.consult?"별도 상담":won(tier.p*tier.q)}</span>`;
+  return `<div class="item${on?" on":""}" data-id="${it.id}">
+    <label class="check"><input type="checkbox" id="pick-${it.id}" data-act="pick"${on?" checked":""}><span><span class="iname">${esc(it.name)}</span>${(why||consult)?`<span class="badges">${why}${consult}</span>`:""}</span></label>
+    ${amt}
+    <div class="idesc">${tierSel}<span>${esc(tier.desc)}</span><span class="pnote">${priceNote(tier)}</span>${qty}</div>
+  </div>`;
+}
+function redrawRow(id){
+  const row=document.querySelector(`.item[data-id="${id}"]`); if(!row) return;
+  const tmp=document.createElement("div"); tmp.innerHTML=rowHTML(ITEM[id]); row.replaceWith(tmp.firstElementChild);
+  const det=document.querySelector(`details[data-cat="${ITEM[id].cat}"]`);
+  const n=ITEM[id] && CATS.find(c=>c.id===ITEM[id].cat).items.filter(i=>S.sel[i.id]).length;
+  det.querySelector(".cat-count").textContent = n?n+"개 선택":"";
+}
+$("#cats").addEventListener("toggle", e=>{
+  const d=e.target; if(d.tagName!=="DETAILS") return;
+  d.open ? openCats.add(d.dataset.cat) : openCats.delete(d.dataset.cat);
+}, true);
+function changed(id){ S.touched=true; save(); redrawRow(id); updateTotal(); }
+$("#cats").addEventListener("change", e=>{
+  const el=e.target, row=el.closest(".item"); if(!row) return; const id=row.dataset.id, it=ITEM[id];
+  if(el.dataset.act==="pick"){
+    if(el.checked){ const tier=it.tiers[0]; S.sel[id]={t:0,q: tier.m ? +S.months : tier.q}; }
+    else delete S.sel[id];
+    changed(id);
+  } else if(el.dataset.act==="tier"){
+    const ti=+el.value, tier=it.tiers[ti];
+    S.sel[id]={t:ti,q: tier.m ? +S.months : tier.q}; changed(id);
+  } else if(el.dataset.act==="qty"){
+    const tier=it.tiers[S.sel[id].t]; let v=Math.round(+el.value||0); if(v<tier.min) v=tier.min;
+    S.sel[id].q=v; changed(id);
+  }
+});
+$("#cats").addEventListener("click", e=>{
+  const b=e.target.closest("button[data-act]"); if(!b) return; const id=b.closest(".item").dataset.id;
+  const s=S.sel[id], tier=ITEM[id].tiers[s.t];
+  const step = tier.min>=10 ? 10 : 1;
+  s.q = b.dataset.act==="inc" ? s.q+step : Math.max(tier.min, s.q-step);
+  changed(id);
+  const inp=document.getElementById("qty-"+id); if(inp) inp.focus();
+});
+$("#reRec").addEventListener("click", ()=>{ applyRecommend(); $("#reNotice").hidden=true; drawCats(); updateTotal(); });
+
+/* ---------- 견적서 ---------- */
+function hangul(n){
+  if(!n) return "영";
+  const d=["","일","이","삼","사","오","육","칠","팔","구"], s=["","십","백","천"], b=["","만","억","조"];
+  let out="", gi=0;
+  while(n>0){
+    let g=n%10000, gs="";
+    for(let i=0;i<4;i++){ const dig=g%10; if(dig) gs=d[dig]+s[i]+gs; g=Math.floor(g/10); }
+    if(gs) out=gs+b[gi]+out;
+    n=Math.floor(n/10000); gi++;
+  }
+  return out;
+}
+function today(){ const d=new Date(); return {y:d.getFullYear(), m:String(d.getMonth()+1).padStart(2,"0"), d:String(d.getDate()).padStart(2,"0")}; }
+function quoteNo(){ if(!S.no){ const t=today(); S.no=`${t.y}${t.m}-W${Math.floor(100+Math.random()*900)}`; save(); } return S.no; }
+function budgetCheck(supply){
+  const cap=BUDGET_CAP[S.budget]; if(!cap) return null;
+  const limit=cap*(+S.months);
+  return supply<=limit ? {ok:true,text:`예산 안 (기간 예산 ${won(limit)})`} : {ok:false,text:`예산보다 ${won(supply-limit)} 많음 (기간 예산 ${won(limit)})`};
+}
+function drawDoc(){
+  const t=totals(), td=today(), no=quoteNo();
+  const paid=t.ls.filter(l=>!l.tier.consult), consult=t.ls.filter(l=>l.tier.consult);
+  const bc=budgetCheck(t.supply);
+  const hasAdSpend = t.ls.some(l=>["metaops","brandsearch","googlead","powerlink","shopad","kakao","carrot"].includes(l.it.id));
+  const ans=[
+    ["업종", label("industry",S.industry)],
+    ["지역", S.region],
+    ["목표", S.goals.map(v=>label("goals",v)).join(", ") + (S.goals.includes("foreign")&&S.foreign.length?` (${S.foreign.map(v=>label("foreign",v)).join(", ")})`:"")],
+    ["홈페이지", label("homepage",S.homepage)],
+    ["플레이스", label("place",S.place)],
+    ["운영 중인 채널", S.channels.map(v=>label("channels",v)).join(", ")],
+    ["디자인, 촬영", S.branding.map(v=>label("branding",v)).join(", ")],
+    ["월 예산", label("budget",S.budget)],
+    ["기간", label("months",S.months)],
+    ["고민", S.worry]
+  ].filter(a=>a[1]);
+  $("#doc").innerHTML = !t.ls.length ? `<div class="empty">선택한 항목이 없습니다. 이전 단계에서 항목을 골라 주세요.</div>` : `
+  <article class="paper" id="paper">
+    <h2 class="doc">견적서</h2>
+    <div class="docmeta"><span>견적번호 ${no}</span><span>견적일자 ${td.y}-${td.m}-${td.d}</span></div>
+    <div class="parties">
+      <div class="party"><span class="k">수신</span><span class="v">${esc(S.company||"고객사")} 귀하</span>${S.person?`<span>${esc(S.person)}</span>`:""}${S.contact?`<span>${esc(S.contact)}</span>`:""}</div>
+      <div class="party"><span class="k">공급자</span><span class="v">(주)플랜더</span><span>견적 담당 이동욱 대표</span></div>
+    </div>
+    <div class="sum-line"><span class="kor">일금 ${hangul(t.grand)}원정</span><span class="num">₩${t.grand.toLocaleString("ko-KR")} (부가세 포함)</span></div>
+    <div class="tbl-wrap"><table class="lines">
+      <thead><tr><th class="no">No.</th><th>항목</th><th class="r">단가</th><th class="r">수량</th><th class="r">금액</th></tr></thead>
+      <tbody>${paid.map((l,i)=>`<tr><td class="no">${i+1}</td><td><div>${esc(l.it.name)}${l.it.tiers.length>1?` <span class="d">(${esc(l.tier.tier)})</span>`:""}</div><div class="d">${esc(l.tier.desc)}</div></td><td class="r">${won(l.tier.p)}</td><td class="r">${l.q.toLocaleString("ko-KR")} ${esc(l.tier.u)}</td><td class="r">${won(l.amt)}</td></tr>`).join("")}</tbody>
+    </table></div>
+    <div class="totals"><dl>
+      <dt>공급가액</dt><dd>${won(t.supply)}</dd>
+      <dt>부가세 (10%)</dt><dd>${won(t.vat)}</dd>
+      <dt class="grand">최종 견적</dt><dd class="grand">${won(t.grand)}</dd>
+    </dl></div>
+    ${bc?`<div><span class="budget-chip ${bc.ok?"ok":"over"}">${bc.text}</span></div>`:""}
+    ${consult.length?`<div class="blk"><h3>상담 후 금액이 정해지는 항목</h3><ul>${consult.map(l=>`<li>${esc(l.it.name)}: ${esc(l.tier.desc)}</li>`).join("")}</ul></div>`:""}
+    <div class="blk"><h3>안내</h3><ul>
+      <li>단가가 범위로 정해진 상품은 중간값으로, "부터"로 표시된 상품은 시작 금액으로 계산했습니다.</li>
+      ${hasAdSpend?"<li>광고 상품의 매체비(광고비 충전금)는 견적에 포함되지 않습니다.</li>":""}
+      <li>인터뷰 답변으로 만든 예상 견적입니다. 상담 후 범위와 금액을 확정합니다.</li>
+    </ul></div>
+    <div class="blk"><h3>인터뷰 답변</h3><dl class="answers">${ans.map(a=>`<dt>${a[0]}</dt><dd>${esc(a[1])}</dd>`).join("")}</dl></div>
+    <div class="doc-actions"><button type="button" class="btn primary" id="copyBtn">견적 내용 복사</button><span class="copied" id="copied" role="status"></span></div>
+    <textarea class="fallback" id="fallback" readonly hidden aria-label="견적 내용"></textarea>
+  </article>`;
+  const btn=$("#copyBtn"); if(btn) btn.addEventListener("click", ()=>copyQuote(t,no,td,ans,consult,paid));
+}
+function copyQuote(t,no,td,ans,consult,paid){
+  const L=[];
+  L.push(`[플랜더 예상 견적서] ${no} / ${td.y}-${td.m}-${td.d}`);
+  L.push(`수신: ${S.company||"고객사"}${S.person?" "+S.person:""}${S.contact?" ("+S.contact+")":""}`);
+  L.push("");
+  paid.forEach((l,i)=>L.push(`${i+1}. ${l.it.name}${l.it.tiers.length>1?" ("+l.tier.tier+")":""}: ${won(l.tier.p)} x ${l.q}${l.tier.u} = ${won(l.amt)}`));
+  if(consult.length) L.push("", "상담 후 확정: "+consult.map(l=>l.it.name).join(", "));
+  L.push("", `공급가액 ${won(t.supply)}`, `부가세 ${won(t.vat)}`, `최종 견적 ${won(t.grand)} (일금 ${hangul(t.grand)}원정)`);
+  L.push("", "[인터뷰 답변]"); ans.forEach(a=>L.push(`${a[0]}: ${a[1]}`));
+  const text=L.join("\n");
+  const ok=()=>{ $("#copied").textContent="복사했습니다. 플랜더 담당자에게 메시지로 보내 주세요."; };
+  const fail=()=>{ const f=$("#fallback"); f.hidden=false; f.value=text; f.focus(); f.select(); $("#copied").textContent="자동 복사가 막혀 있습니다. 아래 내용을 길게 눌러 복사해 주세요."; };
+  try{ navigator.clipboard.writeText(text).then(ok,fail); }catch(e){ fail(); }
+}
+
+/* ---------- 단계 이동 ---------- */
+const STEP_NAMES=["기본 정보","목표","현재 상황","항목 조정","견적서"];
+function drawSteps(){
+  $("#steps").innerHTML = STEP_NAMES.map((n,i)=>`<li class="${i<S.step?"done":""}${i===S.step?" now":""}"><button type="button" data-go="${i}"${i===S.step?' aria-current="step"':""}><span class="n">${i+1}</span><span class="lbl">${n}</span></button></li>`).join("");
+}
+function valid(step){
+  if(step===0 && !S.company.trim()){ $("#err0").hidden=false; $("#company").focus(); return false; }
+  if(step===1 && !S.goals.length){ $("#err1").hidden=false; return false; }
+  return true;
+}
+function go(n){
+  for(let i=0;i<n;i++){ if(!valid(i)){ n=i; break; } }
+  if(n>=3){
+    const key=answerKey();
+    if(!S.touched || !Object.keys(S.sel).length){ if(key!==S.recKey || !Object.keys(S.sel).length) applyRecommend(); $("#reNotice").hidden=true; }
+    else $("#reNotice").hidden = key===S.recKey;
+  }
+  S.step=n; save();
+  document.querySelectorAll("section.step").forEach(s=>{ s.hidden = +s.dataset.step!==n; });
+  if(n===3) drawCats();
+  if(n===4) drawDoc();
+  drawSteps(); updateTotal();
+  $("#prev").hidden = n===0;
+  $("#next").hidden = n===4;
+  $("#next").textContent = n===3 ? "견적서 보기" : "다음";
+  $("#prev").textContent = n===4 ? "항목 수정" : "이전";
+  window.scrollTo({top:0,behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+}
+$("#steps").addEventListener("click", e=>{ const b=e.target.closest("[data-go]"); if(b) go(+b.dataset.go); });
+$("#next").addEventListener("click", ()=>{ if(valid(S.step)) go(S.step+1); });
+$("#prev").addEventListener("click", ()=>go(Math.max(0,S.step-1)));
+$("#form").addEventListener("submit", e=>e.preventDefault());
+
+drawChips(); fillForm(); go(Math.min(S.step||0,4));
+})();
+</script>
+</body>
+</html>
