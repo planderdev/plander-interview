@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
 
 /** 섹션 머리의 영문 라벨 (PLANDER 디자인 시스템: 11px, 자간 0.12em, 대문자) */
 const SECTION_LABEL: Record<string, string> = {
@@ -77,11 +77,18 @@ export function Chips({
   // 웍스에서 불러온 업종처럼 목록에 없는 값도 선택된 칩으로 보여 줍니다.
   const extra = !multi && typeof value === "string" && value && !options.includes(value) ? [value] : [];
   const selected = (o: string) => (Array.isArray(value) ? value.includes(o) : value === o);
+  // 다시 그려지기 전에 연달아 눌러도 앞의 선택을 잃지 않도록 마지막 값을 따로 들고 있습니다.
+  const latest = useRef(value);
+  latest.current = value;
   function click(o: string) {
+    const cur = latest.current;
+    let next: string | string[];
     if (multi) {
-      const arr = Array.isArray(value) ? value : [];
-      onChange(arr.includes(o) ? arr.filter((x) => x !== o) : [...arr, o]);
-    } else onChange(value === o ? "" : o);
+      const arr = Array.isArray(cur) ? cur : [];
+      next = arr.includes(o) ? arr.filter((x) => x !== o) : [...arr, o];
+    } else next = cur === o ? "" : o;
+    latest.current = next;
+    onChange(next);
   }
   return (
     <div className="flex flex-wrap gap-2" role="group" aria-label={label}>

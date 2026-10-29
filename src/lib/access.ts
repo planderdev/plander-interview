@@ -28,7 +28,21 @@ export function toShared(i: Interview): SharedInterview {
     counterpartNames: i.counterparts.map((c) => [c.name, c.title].filter(Boolean).join(" ")).filter(Boolean),
     sections: s,
     business: s.business ? i.business : undefined,
-    needs: s.needs ? i.needs : undefined,
+    // 고객에게는 목표, 고민, 바라는 결과, 시작 시점, 해 보고 싶은 채널만 보입니다. (pi_shared_interview 와 같게)
+    needs: s.needs
+      ? {
+          goals: i.needs.goals,
+          pains: i.needs.pains,
+          wish: i.needs.wish,
+          timeline: i.needs.timeline,
+          wantChannels: i.needs.wantChannels,
+          targets: [],
+          period: "",
+          constraints: [],
+          budget: "",
+          decisionBy: "",
+        }
+      : undefined,
     summary: s.summary ? i.summary.external : undefined,
     planderItems: s.plander || s.estimate ? i.planderItems : undefined,
     nextActions: s.nextActions ? i.summary.nextActions.map((a) => ({ text: a.text, due: a.due })) : undefined,
@@ -41,6 +55,7 @@ export function readiness(i: Interview) {
   const items = [
     { label: "상대측 미팅자 기록", ok: i.counterparts.some((c) => c.name.trim()) },
     { label: "고객 업종 기록", ok: Boolean(i.business.industry) },
+    { label: "보강할 마케팅 단계 선택", ok: i.business.funnel.length > 0 },
     { label: "원하는 일 기록", ok: i.needs.goals.length > 0 || Boolean(i.needs.wish.trim()) },
     { label: "플랜더 항목 1개 이상", ok: i.planderItems.length > 0 },
     { label: "요약 작성", ok: Boolean(i.summary.oneline.trim()) },

@@ -105,7 +105,7 @@ export function ConvertSection({
           <div className="h-full bg-prism" style={{ width: `${(r.done / r.total) * 100}%` }} />
         </div>
         <ul className="grid gap-1.5 text-sm">
-          {r.items.slice(0, 5).map((x) => (
+          {r.items.slice(0, 6).map((x) => (
             <li key={x.label} className={`flex items-center gap-2 ${x.ok ? "" : "text-mute"}`}>
               <span aria-hidden className={x.ok ? "text-success" : ""}>{x.ok ? "●" : "○"}</span>
               {x.label}

@@ -13,7 +13,10 @@ import {
   MODELS,
   PARTNER_FIELDS,
   PARTNER_STATUS,
-  STAGES,
+  CONSTRAINTS,
+  PERIODS,
+  TARGETS,
+  WANT_CHANNELS,
   STATUS_META,
   STATUS_ORDER,
   TIMELINES,
@@ -23,6 +26,7 @@ import type { Business, ClientOption, Counterpart, Interview, Member, Needs, Par
 
 import { ClientPicker } from "./client-picker";
 import { ConvertSection } from "./convert-section";
+import { FunnelNotes, FunnelPicker } from "./funnel-picker";
 import { PlanderSection } from "./plander-section";
 import { ShareSection } from "./share-section";
 import { Chips, Field, RemoveButton, Section, uid } from "./ui";
@@ -91,10 +95,11 @@ export function InterviewEditor({
   }, []);
 
   const update = useCallback(
-    (patch: Partial<Interview>) => {
+    /** 바꿀 값, 또는 최신 상태를 받아 바꿀 값을 돌려주는 함수. 빠르게 연달아 바꿔도 앞의 변경을 잃지 않습니다. */
+    (patch: Partial<Interview> | ((cur: Interview) => Partial<Interview>)) => {
       if (readOnly) return;
       setIv((cur) => {
-        const next = { ...cur, ...patch };
+        const next = { ...cur, ...(typeof patch === "function" ? patch(cur) : patch) };
         latest.current = next;
         return next;
       });
@@ -114,13 +119,13 @@ export function InterviewEditor({
     return () => window.removeEventListener("beforeunload", warn);
   }, [state]);
 
-  const setBiz = (p: Partial<Business>) => update({ business: { ...iv.business, ...p } });
-  const setNeeds = (p: Partial<Needs>) => update({ needs: { ...iv.needs, ...p } });
-  const setSum = (p: Partial<Summary>) => update({ summary: { ...iv.summary, ...p } });
+  const setBiz = (p: Partial<Business>) => update((cur) => ({ business: { ...cur.business, ...p } }));
+  const setNeeds = (p: Partial<Needs>) => update((cur) => ({ needs: { ...cur.needs, ...p } }));
+  const setSum = (p: Partial<Summary>) => update((cur) => ({ summary: { ...cur.summary, ...p } }));
   const setCp = (id: string, p: Partial<Counterpart>) =>
-    update({ counterparts: iv.counterparts.map((c) => (c.id === id ? { ...c, ...p } : c)) });
+    update((cur) => ({ counterparts: cur.counterparts.map((c) => (c.id === id ? { ...c, ...p } : c)) }));
   const setPartner = (id: string, p: Partial<PartnerItem>) =>
-    update({ partnerItems: iv.partnerItems.map((x) => (x.id === id ? { ...x, ...p } : x)) });
+    update((cur) => ({ partnerItems: cur.partnerItems.map((x) => (x.id === id ? { ...x, ...p } : x)) }));
   /** 웍스 고객 불러오기: 비어 있는 칸만 채우고, 이미 적은 내용은 덮지 않습니다. */
   function pickClient(c: ClientOption) {
     const region = c.address.split(" ").slice(0, 2).join(" ");
@@ -354,8 +359,11 @@ export function InterviewEditor({
             <Field label="사업 형태" wide>
               <Chips label="사업 형태" options={MODELS} value={iv.business.model} onChange={(v) => setBiz({ model: v as string })} disabled={readOnly} />
             </Field>
-            <Field label="사업 단계" wide>
-              <Chips label="사업 단계" options={STAGES} value={iv.business.stage} onChange={(v) => setBiz({ stage: v as string })} disabled={readOnly} />
+            <Field label="보강이 필요한 마케팅 단계 (에임 퍼널)" wide>
+              <div className="grid gap-3">
+                <FunnelPicker value={iv.business.funnel} onChange={(funnel) => setBiz({ funnel })} disabled={readOnly} />
+                <FunnelNotes value={iv.business.funnel} />
+              </div>
             </Field>
             <Field label="지역" htmlFor="region">
               <input id="region" className="field" value={iv.business.region} placeholder="예: 제주 신제주" onChange={(e) => setBiz({ region: e.target.value })} readOnly={readOnly} />
@@ -378,6 +386,12 @@ export function InterviewEditor({
             <Field label="목표" wide>
               <Chips label="목표" multi options={GOALS} value={iv.needs.goals} onChange={(v) => setNeeds({ goals: v as string[] })} disabled={readOnly} />
             </Field>
+            <Field label="타겟 고객" wide>
+              <Chips label="타겟 고객" multi options={TARGETS} value={iv.needs.targets} onChange={(v) => setNeeds({ targets: v as string[] })} disabled={readOnly} />
+            </Field>
+            <Field label="해 보고 싶은 채널" wide>
+              <Chips label="해 보고 싶은 채널" multi options={WANT_CHANNELS} value={iv.needs.wantChannels} onChange={(v) => setNeeds({ wantChannels: v as string[] })} disabled={readOnly} />
+            </Field>
             <Field label="지금 겪는 문제" htmlFor="pains" wide>
               <textarea id="pains" className="field" value={iv.needs.pains} placeholder="예: 오픈 직후 리뷰가 없어 지도 검색에서 밀릴까 걱정" onChange={(e) => setNeeds({ pains: e.target.value })} readOnly={readOnly} />
             </Field>
@@ -387,8 +401,14 @@ export function InterviewEditor({
             <Field label="시작 시점" wide>
               <Chips label="시작 시점" options={TIMELINES} value={iv.needs.timeline} onChange={(v) => setNeeds({ timeline: v as string })} disabled={readOnly} />
             </Field>
-            <Field label="월 예산" wide>
+            <Field label="계약 기간" wide>
+              <Chips label="계약 기간" options={PERIODS} value={iv.needs.period} onChange={(v) => setNeeds({ period: v as string })} disabled={readOnly} />
+            </Field>
+            <Field label="월 예산 (매체 광고비 제외)" wide>
               <Chips label="월 예산" options={BUDGETS} value={iv.needs.budget} onChange={(v) => setNeeds({ budget: v as string })} disabled={readOnly} />
+            </Field>
+            <Field label="제약 조건" wide>
+              <Chips label="제약 조건" multi options={CONSTRAINTS} value={iv.needs.constraints} onChange={(v) => setNeeds({ constraints: v as string[] })} disabled={readOnly} />
             </Field>
             <Field label="결정 시점" htmlFor="decision-by">
               <input id="decision-by" className="field" value={iv.needs.decisionBy} placeholder="예: 11월 첫째 주" onChange={(e) => setNeeds({ decisionBy: e.target.value })} readOnly={readOnly} />
@@ -398,7 +418,13 @@ export function InterviewEditor({
 
         {/* 05 플랜더가 할 수 있는 일 */}
         <Section id="plander" no={5} title="플랜더가 할 수 있는 일" desc="플랜더 단가표 기준입니다. 범위 단가는 중간값, '부터' 단가는 시작 금액으로 계산합니다.">
-          <PlanderSection items={iv.planderItems} onChange={(planderItems) => update({ planderItems })} readOnly={readOnly} />
+          <PlanderSection
+            items={iv.planderItems}
+            funnel={iv.business.funnel}
+            constraints={iv.needs.constraints}
+            onChange={(planderItems) => update({ planderItems })}
+            readOnly={readOnly}
+          />
         </Section>
 
         {/* 06 외부 협력 */}

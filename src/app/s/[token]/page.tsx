@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { estimate, won } from "@/lib/estimate";
+import { stageLabels } from "@/lib/funnel";
 import { getShared } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -107,6 +108,7 @@ export default async function SharedPage({ params }: { params: Promise<{ token: 
             <Rows
               rows={[
                 ["목표", s.needs.goals.join(", ")],
+                ["해 보고 싶은 채널", (s.needs.wantChannels ?? []).join(", ")],
                 ["지금 겪는 문제", s.needs.pains],
                 ["바라는 결과", s.needs.wish],
                 ["시작 시점", s.needs.timeline],
@@ -120,7 +122,7 @@ export default async function SharedPage({ params }: { params: Promise<{ token: 
             <Rows
               rows={[
                 ["업종", s.business.industry],
-                ["사업 단계", s.business.stage],
+                ["보강할 마케팅 단계", stageLabels(s.business.funnel ?? []).join(", ")],
                 ["지역", s.business.region],
                 ["운영 채널", s.business.channels.join(", ")],
                 ["사업 설명", s.business.description],

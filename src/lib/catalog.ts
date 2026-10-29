@@ -118,6 +118,46 @@ export const CATALOG: CatalogCategory[] = [
   {id:"productvideo",name:"상품 영상촬영",tiers:[t("Normal","쇼핑몰 상품용 영상",300000,"편",{from:true})]},
   {id:"print",name:"제작물 인쇄",tiers:[t("Normal","리플렛, 패키지, 스티커 인쇄. 수량과 재질에 따라 다릅니다",0,"식",{consult:true})]}
  ]},
+ {id:"aim-mall",projectCategory:"국내마케팅",name:"쇼핑몰 마케팅 패키지 (에임)",items:[
+  {id:"cafe24",name:"카페24 쇼핑몰 구축",tiers:[t("협의", "유료 테마 포함 구축. 네이버 리뷰 연동과 상세페이지 제작까지", 0, "회", {consult:true})]},
+  {id:"trafficSlot",name:"순위작업 트래픽 (가격비교, 스마트스토어 슬롯)",tiers:[t("협의", "가격비교, 스마트스토어 슬롯 트래픽으로 키워드 순위 작업", 0, "키워드/월", {consult:true})]},
+  {id:"expSponsor",name:"스마트스토어 체험단, 협찬형 (#광고 표기)",tiers:[t("협의", "물건 제공과 원고비 구성. 기획 참여 가능 여부 선택", 0, "건", {consult:true})]},
+  {id:"expReal",name:"체험단, 내돈내산 리얼리뷰",tiers:[t("협의", "물건 제공, 구매비, 원고비. 실구매 기반 블로그 리뷰", 0, "건", {consult:true})]}
+ ]},
+ {id:"aim-viral",projectCategory:"국내마케팅",name:"바이럴 마케팅, SNS (에임)",items:[
+  {id:"snsOwn",name:"자체계정 세팅, 운영",tiers:[t("협의", "인스타그램, 유튜브, 틱톡, 쓰레드 가입부터 프로필 세팅, 이후 콘텐츠 공급", 0, "채널/월", {consult:true})]},
+  {id:"boost",name:"부스팅",tiers:[t("협의", "업로드한 콘텐츠의 도달을 넓히는 작업", 0, "건", {consult:true})]},
+  {id:"powerPage",name:"파워페이지 게재 (인스타그램)",tiers:[t("협의", "팔로워가 많은 타계정에 콘텐츠 게재", 0, "건", {consult:true})]},
+  {id:"contentAd",name:"인플루언서 콘텐츠 광고 (#광고 표기)",tiers:[t("협의", "타계정 협찬 또는 내돈내산 방식 콘텐츠 광고", 0, "건", {consult:true})]},
+  {id:"tiktokAd",name:"틱톡 광고 운영",tiers:[t("협의", "틱톡 광고 세팅과 운영 대행", 0, "월", {consult:true})]},
+  {id:"ytShorts",name:"유튜브 쇼츠 제작",tiers:[t("협의", "숏폼 쇼츠 1편 제작", 0, "건", {consult:true})]}
+ ]},
+ {id:"aim-factory",projectCategory:"국내마케팅",name:"콘텐츠 공장 (에임)",items:[
+  {id:"factoryA",name:"공장 A, 생성형 막배포",tiers:[t("협의", "카테고리 레퍼런스 기반 생성형 콘텐츠 양산과 배포. 월 고정", 0, "월", {consult:true})]},
+  {id:"factoryB",name:"공장 B, 인물형 막배포",tiers:[t("협의", "인물 기반 콘텐츠 양산. 변호사, 세무사 전용", 0, "월", {consult:true})]},
+  {id:"factoryC",name:"공장 C, 캐러셀과 메타 광고",tiers:[t("협의", "캐러셀(카드뉴스) 제작, 2차 활용 편집, 메타 광고 운영. 월 고정", 0, "월", {consult:true})]}
+ ]},
+ {id:"aim-naver",projectCategory:"국내마케팅",name:"네이버 작업 (에임)",items:[
+  {id:"cafeViral",name:"카페 바이럴",tiers:[t("협의", "네이버 카페 게시글 바이럴. 원고 작성과 배포 포함", 0, "건", {consult:true})]},
+  {id:"cafeInfil",name:"카페 침투 막배포",tiers:[t("협의", "침투 가능 카페 목록 기반, 카테고리별 게시글과 댓글 1~2건", 0, "건", {consult:true})]},
+  {id:"blogMass",name:"블로그 막배포",tiers:[t("협의", "대량 배포용 블로그 포스팅", 0, "건", {consult:true})]},
+  {id:"blogReal",name:"블로그 실계정 배포",tiers:[t("협의", "실사용 계정 기반 블로그 포스팅", 0, "건", {consult:true})]},
+  {id:"blogTopAcc",name:"블로그 최적화 계정 배포",tiers:[t("협의", "최적화 계정 포스팅, 상위 노출용", 0, "건", {consult:true})]},
+  {id:"clip",name:"네이버 클립 배포",tiers:[t("협의", "계정 사용비, 2차 활용, 순위작업 포함", 0, "건", {consult:true})]}
+ ]},
+ {id:"aim-retention",projectCategory:"국내마케팅",name:"리텐션, CRM (에임)",items:[
+  {id:"kakaoChannel",name:"카카오톡 채널 운영, 메시지",tiers:[t("협의", "채널 친구 모집부터 정기 메시지, 쿠폰 발송까지", 0, "월", {consult:true})]},
+  {id:"alimtalkFlow",name:"알림톡, 친구톡 자동화",tiers:[t("협의", "구매 후 안내, 후기 요청, 재구매 알림 자동화 설계와 세팅", 0, "식", {consult:true})]},
+  {id:"storeNotify",name:"스마트스토어 알림받기, 톡톡 마케팅",tiers:[t("협의", "알림받기 고객 모집, 톡톡 메시지와 재구매 쿠폰 운영", 0, "월", {consult:true})]},
+  {id:"crmSegment",name:"CRM 고객 분석, 재구매 캠페인",tiers:[t("협의", "첫 구매, 재구매, 휴면 고객으로 나눠 그룹별 캠페인 실행", 0, "월", {consult:true})]},
+  {id:"retargetAd",name:"리타겟팅 광고 운영",tiers:[t("협의", "구매자, 장바구니 이탈자, 방문자 대상 리타겟팅. 매체비는 광고주 부담", 0, "월", {consult:true})]},
+  {id:"membership",name:"멤버십, 적립금 설계",tiers:[t("협의", "등급, 적립금, 재구매 쿠폰 구조 설계와 자사몰 세팅", 0, "식", {consult:true})]},
+  {id:"subscription",name:"정기구독, 재구매 상품 구성",tiers:[t("협의", "정기배송, 묶음 상품 구성과 구독 결제 세팅", 0, "식", {consult:true})]},
+  {id:"reviewEvent",name:"후기, 포토리뷰 이벤트 운영",tiers:[t("협의", "후기 이벤트 운영, 모인 후기를 상세페이지와 SNS 에 재활용", 0, "회", {consult:true})]},
+  {id:"referral",name:"추천인 프로그램 설계",tiers:[t("협의", "친구 추천 보상 구조, 추천 링크와 쿠폰 발급 세팅", 0, "식", {consult:true})]},
+  {id:"newsletter",name:"뉴스레터, 이메일 마케팅",tiers:[t("협의", "정기 뉴스레터와 구매 후 이메일 기획, 발송", 0, "월", {consult:true})]},
+  {id:"community",name:"브랜드 커뮤니티 운영",tiers:[t("협의", "오픈채팅, 카페, 인스타그램 고객 모임 운영", 0, "월", {consult:true})]}
+ ]},
  {id:"china",projectCategory:"중국마케팅",name:"중국 마케팅",items:[
   {id:"dianping",name:"따중디엔핑",tiers:[t("등록","업체 등록",200000,"건"),t("스타터 3개월","등록과 관리 3개월, CPC 충전비 3,000위안 포함",1000000,"건"),t("스타터 1년","등록과 관리 1년, CPC 충전비 5,000위안 포함",2500000,"건"),t("어드밴스 3개월","관리 3개월, CPC 3,000위안, 체험단 5팀",1500000,"건"),t("어드밴스 1년","관리 1년, CPC 5,000위안, 체험단 10팀, 기자단 10팀",3500000,"건")]},
   {id:"xhs",name:"샤오홍슈 체험단",tiers:[t("스타터","체험단 5팀",500000,"건"),t("어드밴스","체험단 5팀과 기자단 10팀",1000000,"건"),t("마스터","팔로워 1만 이상 체험단 5팀",2000000,"건")]},

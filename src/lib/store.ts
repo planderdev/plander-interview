@@ -48,6 +48,18 @@ function fromRow(r: Row): Interview {
   };
 }
 
+/** 저장 파일에 예전 형식으로 남은 목업 기록에 새 칸의 기본값을 채웁니다. */
+function normalize(i: Interview): Interview {
+  return {
+    ...i,
+    business: { ...emptyBusiness(), ...i.business },
+    needs: { ...emptyNeeds(), ...i.needs },
+    summary: { ...emptySummary(), ...i.summary },
+    shareSections: { ...defaultSections(), ...i.shareSections },
+    check: { ...emptyCheck(), ...i.check },
+  };
+}
+
 /** 화면에서 고칠 수 있는 칸만 DB 행으로 옮깁니다. 전환 결과, 공유 토큰, 작성자는 여기서 바꾸지 않습니다. */
 function toEditableRow(i: Interview): Row {
   return {
@@ -167,7 +179,8 @@ export async function listInterviews(me: Member): Promise<Interview[]> {
   const sb = await createSupabaseServerClient();
   if (!sb) {
     return mockDb()
-      .interviews.filter((i) => canView(i, me))
+      .interviews.map(normalize)
+      .filter((i) => canView(i, me))
       .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
   // 볼 수 있는 행은 RLS(pi_can_view)가 거릅니다.
@@ -180,7 +193,7 @@ export async function getInterview(me: Member, id: string): Promise<Interview | 
   const sb = await createSupabaseServerClient();
   if (!sb) {
     const i = mockDb().interviews.find((x) => x.id === id);
-    return i && canView(i, me) ? structuredClone(i) : null;
+    return i && canView(i, me) ? normalize(structuredClone(i)) : null;
   }
   const { data } = await sb.from(TABLES.interviews).select("*").eq("id", id).maybeSingle();
   return data ? fromRow(data) : null;
@@ -289,7 +302,7 @@ export async function getShared(token: string): Promise<SharedInterview | null> 
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(token)) return null;
   if (!isSupabaseConfigured()) {
     const i = mockDb().interviews.find((x) => x.shareEnabled && x.shareToken === token);
-    return i ? toShared(i) : null;
+    return i ? toShared(normalize(i)) : null;
   }
   const sb = await createSupabaseServerClient();
   const { data, error } = await sb!.rpc(RPC.shared, { p_token: token });

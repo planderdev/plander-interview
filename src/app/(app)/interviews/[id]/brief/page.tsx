@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { CopyButton } from "@/components/copy-button";
 import { canEdit, readiness } from "@/lib/access";
 import { estimate, won } from "@/lib/estimate";
+import { stageLabels } from "@/lib/funnel";
 import {
   COUNTERPART_ROLE,
   PARTNER_STATUS,
@@ -147,7 +148,7 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
           rows={[
             ["업종", iv.business.industry],
             ["사업 형태", iv.business.model],
-            ["사업 단계", iv.business.stage],
+            ["보강할 마케팅 단계", stageLabels(iv.business.funnel).join(", ") || iv.business.stage],
             ["지역", iv.business.region],
             ["웹사이트, SNS", iv.business.website],
             ["운영 채널", iv.business.channels.join(", ")],
@@ -160,6 +161,10 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
         <Rows
           rows={[
             ["목표", iv.needs.goals.join(", ")],
+            ["타겟 고객", iv.needs.targets.join(", ")],
+            ["해 보고 싶은 채널", iv.needs.wantChannels.join(", ")],
+            ["계약 기간", iv.needs.period],
+            ["제약 조건", iv.needs.constraints.join(", ")],
             ["지금 겪는 문제", iv.needs.pains],
             ["바라는 결과", iv.needs.wish],
             ["시작 시점", iv.needs.timeline],

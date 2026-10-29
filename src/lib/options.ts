@@ -39,20 +39,57 @@ export const COUNTERPART_ROLE: Record<string, string> = {
   reference: "참고인",
 };
 
+/** 업종: 에임 레시피 빌더의 10개 업종에 마케팅 외 의뢰(관광, 기관, IT)를 더했습니다. */
 export const INDUSTRIES = [
-  "식당, 카페",
-  "뷰티, 병원",
-  "법률, 세무 등 전문직",
-  "쇼핑몰, 제품",
+  "로컬, 오프라인 매장",
+  "식품, 건강",
+  "뷰티, 화장품",
+  "패션, 잡화",
+  "리빙, 생활용품",
+  "펫, 반려동물",
+  "이커머스 일반",
+  "전문직 (변호사, 세무사)",
+  "병원, 의료",
+  "교육, 콘텐츠",
   "숙박, 체험, 관광",
-  "로드샵, 매장",
   "협회, 단체, 공공",
   "IT, 스타트업",
   "기타",
 ];
 export const MODELS = ["오프라인 매장", "온라인 판매", "B2B", "기관, 단체", "복합"];
-export const STAGES = ["창업 준비", "오픈 준비", "운영 중", "확장, 리뉴얼"];
-export const CHANNELS = ["홈페이지", "네이버 플레이스", "네이버 블로그", "인스타그램", "유튜브", "스마트스토어", "자사몰", "광고 집행 중"];
+/** 지금 운영 중인 채널: 에임 보유 판매 채널(자사몰, 스마트스토어, 오픈마켓, 오프라인 매장)을 포함합니다. */
+export const CHANNELS = [
+  "오프라인 매장",
+  "자사몰",
+  "스마트스토어",
+  "쿠팡, 오픈마켓",
+  "홈페이지",
+  "네이버 플레이스",
+  "네이버 블로그",
+  "인스타그램",
+  "유튜브",
+  "카카오톡 채널",
+  "광고 집행 중",
+];
+/** 에임 레시피 빌더의 타겟 고객 */
+export const TARGETS = ["여성 중심", "남성 중심", "10~20대", "30~40대", "50대 이상", "B2B"];
+/** 에임 레시피 빌더의 하고 싶은 채널 */
+export const WANT_CHANNELS = [
+  "인스타그램",
+  "유튜브",
+  "틱톡",
+  "쓰레드",
+  "네이버 블로그",
+  "네이버 카페",
+  "체험단, 리뷰",
+  "순위, 트래픽",
+  "메타 광고",
+  "클립, 숏폼",
+];
+/** 에임 레시피 빌더의 계약 기간 */
+export const PERIODS = ["1개월 (테스트)", "3개월", "6개월", "12개월"];
+/** 에임 레시피 빌더의 제약 조건 */
+export const CONSTRAINTS = ["가격비교 작업 불가", "광고 표기(#광고) 엄수", "매체 광고비 집행 없음"];
 
 export const GOALS = [
   "매장 방문 늘리기",
@@ -102,9 +139,12 @@ export const PROJECT_CATEGORIES = [
 ];
 
 export const emptyBusiness = (): Business => ({
-  industry: "", model: "", stage: "", region: "", website: "", channels: [], description: "",
+  industry: "", model: "", stage: "", funnel: [], region: "", website: "", channels: [], description: "",
 });
-export const emptyNeeds = (): Needs => ({ goals: [], pains: "", wish: "", timeline: "", budget: "", decisionBy: "" });
+export const emptyNeeds = (): Needs => ({
+  goals: [], targets: [], wantChannels: [], period: "", constraints: [],
+  pains: "", wish: "", timeline: "", budget: "", decisionBy: "",
+});
 export const emptySummary = (): Summary => ({ oneline: "", external: "", risks: "", nextActions: [], internalMemo: "" });
 export const defaultSections = (): ShareSections => ({
   summary: true, business: false, needs: true, plander: true, estimate: false, nextActions: true,

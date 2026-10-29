@@ -30,7 +30,10 @@ export interface Counterpart {
 export interface Business {
   industry: string;
   model: string;
+  /** 예전 사업 단계 값. 화면에서는 funnel 로 대체했고 기존 기록 호환용으로만 둡니다. */
   stage: string;
+  /** 보강이 필요한 마케팅 퍼널 단계 (에임: aw 인지, in 관심, co 고려, cv 전환, re 재구매) */
+  funnel: string[];
   region: string;
   website: string;
   channels: string[];
@@ -39,6 +42,14 @@ export interface Business {
 
 export interface Needs {
   goals: string[];
+  /** 타겟 고객 (에임 레시피 빌더) */
+  targets: string[];
+  /** 해 보고 싶은 채널 */
+  wantChannels: string[];
+  /** 계약 기간 */
+  period: string;
+  /** 제약 조건 (가격비교 작업 불가 등) */
+  constraints: string[];
   pains: string;
   wish: string;
   timeline: string;
