@@ -61,7 +61,7 @@ export function FunnelNotes({ value }: { value: string[] }) {
     <ul className="grid gap-1.5 text-sm">
       {picked.map((s) => (
         <li key={s.key} className="text-sub">
-          <span className="font-medium text-ink">{s.label}, {s.head}.</span> {s.body}
+          <span className="font-medium text-ink">{s.label} 단계.</span> {s.body}
         </li>
       ))}
     </ul>

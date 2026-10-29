@@ -28,6 +28,7 @@ import { ClientPicker } from "./client-picker";
 import { ConvertSection } from "./convert-section";
 import { FunnelNotes, FunnelPicker } from "./funnel-picker";
 import { PlanderSection } from "./plander-section";
+import { QuoteFields } from "./quote-fields";
 import { ShareSection } from "./share-section";
 import { Chips, Field, RemoveButton, Section, uid } from "./ui";
 
@@ -189,6 +190,9 @@ export function InterviewEditor({
           <a href="/interviews" className="text-link text-sm text-sub">인터뷰 목록</a>
           <a href={`/interviews/${iv.id}/brief`} className="btn btn-sm" onClick={(e) => { if (state !== "saved" && !readOnly) { e.preventDefault(); void save().then(() => { window.location.href = `/interviews/${iv.id}/brief`; }); } }}>
             내부 공유 페이지
+          </a>
+          <a href={`/interviews/${iv.id}/proposal`} className="btn btn-sm" target="_blank" rel="noreferrer">
+            전략 제안서
           </a>
           <span className="chip ml-auto" role="status">
             <span
@@ -368,7 +372,7 @@ export function InterviewEditor({
             <Field label="지역" htmlFor="region">
               <input id="region" className="field" value={iv.business.region} placeholder="예: 제주 신제주" onChange={(e) => setBiz({ region: e.target.value })} readOnly={readOnly} />
             </Field>
-            <Field label="웹사이트, SNS 주소" htmlFor="website">
+            <Field label="웹사이트나 SNS 주소" htmlFor="website">
               <input id="website" className="field" value={iv.business.website} placeholder="https://" onChange={(e) => setBiz({ website: e.target.value })} readOnly={readOnly} />
             </Field>
             <Field label="지금 운영 중인 채널" wide>
@@ -423,6 +427,12 @@ export function InterviewEditor({
             funnel={iv.business.funnel}
             constraints={iv.needs.constraints}
             onChange={(planderItems) => update({ planderItems })}
+            readOnly={readOnly}
+          />
+          <QuoteFields
+            interview={iv}
+            ownerName={nameOf(iv.createdBy)}
+            onChange={(quote) => update({ quote })}
             readOnly={readOnly}
           />
         </Section>

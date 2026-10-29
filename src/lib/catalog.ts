@@ -67,7 +67,7 @@ export const CATALOG: CatalogCategory[] = [
   {id:"placemgmt",name:"플레이스 월관리",tiers:[t("Normal","매월 순위 상승 작업, 매일 순위 체크",0,"개월",{consult:true})]},
   {id:"placetop",name:"플레이스 상위노출 보장형",tiers:[t("PREMIUM","모바일 1페이지 1~5위, 25일 보장",0,"키워드",{consult:true})]}
  ]},
- {id:"cafe",projectCategory:"국내마케팅",name:"카페, 지식인, 언론",items:[
+ {id:"cafe",projectCategory:"국내마케팅",name:"카페와 언론",items:[
   {id:"cafetop",name:"카페 인기글 상위노출",tiers:[t("Normal","인기카페탭에 원하는 원고와 이미지 노출, 25일 보장",450000,"건",{r:"30~60만 원"})]},
   {id:"momcafe",name:"맘카페 침투 마케팅",tiers:[t("Normal","맘카페 게시글 1개와 댓글 2개",25000,"건",{q:5,min:5})]},
   {id:"hotdeal",name:"핫딜 마케팅",tiers:[t("Normal","카페 핫딜게시판 게시글 1개",30000,"건",{q:5,min:5})]},
@@ -75,7 +75,7 @@ export const CATALOG: CatalogCategory[] = [
   {id:"kin",name:"지식인 상위노출",tiers:[t("Normal","지식인 1페이지 1~3위, 25일 보장",200000,"키워드",{from:true})]},
   {id:"press",name:"언론보도",tiers:[t("Normal","제휴 언론사로 네이버, 다음에 기사 송출. 언론사마다 금액이 다릅니다",0,"건",{consult:true})]}
  ]},
- {id:"sns",projectCategory:"국내마케팅",name:"인스타그램, 메타 광고",items:[
+ {id:"sns",projectCategory:"국내마케팅",name:"인스타그램과 메타 광고",items:[
   {id:"instaops",name:"인스타 운영대행",tiers:[t("Normal","월 8회 게시 (정보, 홍보글 6회와 릴스 2회)",800000,"개월",{m:true,from:true})]},
   {id:"reels",name:"릴스 콘텐츠 제작 올인원",tiers:[t("Normal","기획, 촬영, 편집, 업로드까지",300000,"건",{q:4})]},
   {id:"reelsexp",name:"인스타 릴스체험단",tiers:[t("Normal","방문 또는 배송 체험 영상을 편집해 릴스 업로드, 10건 묶음",400000,"묶음")]},
@@ -84,7 +84,7 @@ export const CATALOG: CatalogCategory[] = [
   {id:"metaopt",name:"메타 광고 최적화 세팅",tiers:[t("Normal","인스타그램, 페이스북 광고 계정과 타겟 세팅",200000,"식")]},
   {id:"metaops",name:"메타 광고 운영대행",tiers:[t("Normal","광고 소재와 타겟 운영, 리타게팅. 광고비는 별도",1200000,"개월",{m:true})]}
  ]},
- {id:"seo",projectCategory:"국내마케팅",name:"홈페이지 SEO, 성과 측정",items:[
+ {id:"seo",projectCategory:"국내마케팅",name:"SEO와 성과 측정",items:[
   {id:"webseo",name:"홈페이지 SEO 최적화 세팅",tiers:[t("Normal","검색엔진 웹마스터 도구, 애널리틱스 등록 등 기술 SEO 전반",900000,"식",{r:"80~100만 원"})]},
   {id:"googleseo",name:"구글 검색 최적화",tiers:[t("Normal","구글 검색 노출을 위한 콘텐츠와 구조 최적화",800000,"식")]},
   {id:"webtop",name:"웹사이트 상위노출",tiers:[t("Normal","웹사이트 영역 순위 상승 작업",300000,"식",{from:true}),t("보장형","웹사이트 영역 1~4위 보장 (PC, 모바일)",500000,"키워드",{from:true})]},
@@ -97,10 +97,10 @@ export const CATALOG: CatalogCategory[] = [
   {id:"shopreview",name:"쇼핑몰 구매평 작업",tiers:[t("Normal","키워드 검색 유입, 찜, 리뷰 (플랫폼 상관없음)",6000,"건",{q:50,min:50})]},
   {id:"shopmain",name:"쇼핑몰 메인페이지 디자인",tiers:[t("Normal","메인페이지 디자인",300000,"페이지",{from:true})]},
   {id:"shopdetail",name:"쇼핑몰 상세페이지 디자인",tiers:[t("Normal","상세페이지 디자인",200000,"페이지",{q:2,from:true})]},
-  {id:"banner",name:"배너, 팝업 이미지",tiers:[t("Normal","1000x500px 배너 또는 팝업",50000,"장",{from:true})]},
+  {id:"banner",name:"배너와 팝업 이미지",tiers:[t("Normal","1000x500px 배너 또는 팝업",50000,"장",{from:true})]},
   {id:"eventpage",name:"이벤트 설명 페이지",tiers:[t("Normal","1000x1500px 간단한 이벤트 페이지",50000,"페이지",{from:true})]}
  ]},
- {id:"local",projectCategory:"국내마케팅",name:"당근마켓, 카카오",items:[
+ {id:"local",projectCategory:"국내마케팅",name:"당근마켓과 카카오",items:[
   {id:"carrot",name:"당근마켓 광고",tiers:[t("비즈니스 광고","광고 세팅, 홈페이지 등 원하는 링크로 유입",100000,"식",{from:true}),t("비즈프로필","비즈프로필 세팅과 소식 발행 광고",200000,"식",{from:true}),t("상품 판매","자사몰, 스마트스토어 카탈로그 광고 세팅",200000,"식",{from:true})]},
   {id:"kakao",name:"카카오 광고",tiers:[t("BASIC","기존 계정 최적화 (배너가 없으면 제작비 추가)",200000,"식",{from:true}),t("Normal","신규 광고 세팅, 배너 제작과 승인 작업",300000,"식",{from:true})]}
  ]},
@@ -108,7 +108,7 @@ export const CATALOG: CatalogCategory[] = [
   {id:"homepage",name:"홈페이지 제작",tiers:[t("BASIC","간단한 랜딩페이지 (4단락 이하)",500000,"식",{from:true}),t("Normal","기능 코딩이 필요한 랜딩페이지 (5단락 이하)",1000000,"식",{from:true}),t("PREMIUM","메뉴가 다양한 홈페이지",1500000,"식",{from:true})]},
   {id:"mallrenew",name:"쇼핑몰 리뉴얼 제작",tiers:[t("Normal","기존 쇼핑몰 디자인과 구조 리뉴얼",1500000,"식")]}
  ]},
- {id:"brand",projectCategory:"브랜딩",name:"브랜딩, 디자인, 촬영",items:[
+ {id:"brand",projectCategory:"브랜딩",name:"브랜딩과 촬영",items:[
   {id:"leaflet",name:"브랜드 리플렛 디자인",tiers:[t("Normal","브랜드 소개 리플렛 디자인",1500000,"식")]},
   {id:"package",name:"패키지 디자인",tiers:[t("Normal","박스 등 패키지 디자인",1000000,"종")]},
   {id:"sticker",name:"스티커 디자인",tiers:[t("Normal","파우치, 포장용 스티커 4종 묶음",1500000,"묶음")]},
@@ -120,12 +120,12 @@ export const CATALOG: CatalogCategory[] = [
  ]},
  {id:"aim-mall",projectCategory:"국내마케팅",name:"쇼핑몰 마케팅 패키지 (에임)",items:[
   {id:"cafe24",name:"카페24 쇼핑몰 구축",tiers:[t("협의", "유료 테마 포함 구축. 네이버 리뷰 연동과 상세페이지 제작까지", 0, "회", {consult:true})]},
-  {id:"trafficSlot",name:"순위작업 트래픽 (가격비교, 스마트스토어 슬롯)",tiers:[t("협의", "가격비교, 스마트스토어 슬롯 트래픽으로 키워드 순위 작업", 0, "키워드/월", {consult:true})]},
-  {id:"expSponsor",name:"스마트스토어 체험단, 협찬형 (#광고 표기)",tiers:[t("협의", "물건 제공과 원고비 구성. 기획 참여 가능 여부 선택", 0, "건", {consult:true})]},
-  {id:"expReal",name:"체험단, 내돈내산 리얼리뷰",tiers:[t("협의", "물건 제공, 구매비, 원고비. 실구매 기반 블로그 리뷰", 0, "건", {consult:true})]}
+  {id:"trafficSlot",name:"순위작업 트래픽",tiers:[t("협의", "가격비교, 스마트스토어 슬롯 트래픽으로 키워드 순위 작업", 0, "키워드/월", {consult:true})]},
+  {id:"expSponsor",name:"스마트스토어 협찬 체험단",tiers:[t("협의", "물건 제공과 원고비 구성. 기획 참여 가능 여부 선택", 0, "건", {consult:true})]},
+  {id:"expReal",name:"내돈내산 리얼리뷰 체험단",tiers:[t("협의", "물건 제공, 구매비, 원고비. 실구매 기반 블로그 리뷰", 0, "건", {consult:true})]}
  ]},
- {id:"aim-viral",projectCategory:"국내마케팅",name:"바이럴 마케팅, SNS (에임)",items:[
-  {id:"snsOwn",name:"자체계정 세팅, 운영",tiers:[t("협의", "인스타그램, 유튜브, 틱톡, 쓰레드 가입부터 프로필 세팅, 이후 콘텐츠 공급", 0, "채널/월", {consult:true})]},
+ {id:"aim-viral",projectCategory:"국내마케팅",name:"SNS 바이럴 (에임)",items:[
+  {id:"snsOwn",name:"자체계정 세팅과 운영",tiers:[t("협의", "인스타그램, 유튜브, 틱톡, 쓰레드 가입부터 프로필 세팅, 이후 콘텐츠 공급", 0, "채널/월", {consult:true})]},
   {id:"boost",name:"부스팅",tiers:[t("협의", "업로드한 콘텐츠의 도달을 넓히는 작업", 0, "건", {consult:true})]},
   {id:"powerPage",name:"파워페이지 게재 (인스타그램)",tiers:[t("협의", "팔로워가 많은 타계정에 콘텐츠 게재", 0, "건", {consult:true})]},
   {id:"contentAd",name:"인플루언서 콘텐츠 광고 (#광고 표기)",tiers:[t("협의", "타계정 협찬 또는 내돈내산 방식 콘텐츠 광고", 0, "건", {consult:true})]},
@@ -133,9 +133,9 @@ export const CATALOG: CatalogCategory[] = [
   {id:"ytShorts",name:"유튜브 쇼츠 제작",tiers:[t("협의", "숏폼 쇼츠 1편 제작", 0, "건", {consult:true})]}
  ]},
  {id:"aim-factory",projectCategory:"국내마케팅",name:"콘텐츠 공장 (에임)",items:[
-  {id:"factoryA",name:"공장 A, 생성형 막배포",tiers:[t("협의", "카테고리 레퍼런스 기반 생성형 콘텐츠 양산과 배포. 월 고정", 0, "월", {consult:true})]},
-  {id:"factoryB",name:"공장 B, 인물형 막배포",tiers:[t("협의", "인물 기반 콘텐츠 양산. 변호사, 세무사 전용", 0, "월", {consult:true})]},
-  {id:"factoryC",name:"공장 C, 캐러셀과 메타 광고",tiers:[t("협의", "캐러셀(카드뉴스) 제작, 2차 활용 편집, 메타 광고 운영. 월 고정", 0, "월", {consult:true})]}
+  {id:"factoryA",name:"콘텐츠 공장 A (생성형 막배포)",tiers:[t("협의", "카테고리 레퍼런스 기반 생성형 콘텐츠 양산과 배포. 월 고정", 0, "월", {consult:true})]},
+  {id:"factoryB",name:"콘텐츠 공장 B (인물형 막배포)",tiers:[t("협의", "인물 기반 콘텐츠 양산. 변호사, 세무사 전용", 0, "월", {consult:true})]},
+  {id:"factoryC",name:"콘텐츠 공장 C (캐러셀과 메타 광고)",tiers:[t("협의", "캐러셀(카드뉴스) 제작, 2차 활용 편집, 메타 광고 운영. 월 고정", 0, "월", {consult:true})]}
  ]},
  {id:"aim-naver",projectCategory:"국내마케팅",name:"네이버 작업 (에임)",items:[
   {id:"cafeViral",name:"카페 바이럴",tiers:[t("협의", "네이버 카페 게시글 바이럴. 원고 작성과 배포 포함", 0, "건", {consult:true})]},
@@ -145,17 +145,17 @@ export const CATALOG: CatalogCategory[] = [
   {id:"blogTopAcc",name:"블로그 최적화 계정 배포",tiers:[t("협의", "최적화 계정 포스팅, 상위 노출용", 0, "건", {consult:true})]},
   {id:"clip",name:"네이버 클립 배포",tiers:[t("협의", "계정 사용비, 2차 활용, 순위작업 포함", 0, "건", {consult:true})]}
  ]},
- {id:"aim-retention",projectCategory:"국내마케팅",name:"리텐션, CRM (에임)",items:[
-  {id:"kakaoChannel",name:"카카오톡 채널 운영, 메시지",tiers:[t("협의", "채널 친구 모집부터 정기 메시지, 쿠폰 발송까지", 0, "월", {consult:true})]},
-  {id:"alimtalkFlow",name:"알림톡, 친구톡 자동화",tiers:[t("협의", "구매 후 안내, 후기 요청, 재구매 알림 자동화 설계와 세팅", 0, "식", {consult:true})]},
-  {id:"storeNotify",name:"스마트스토어 알림받기, 톡톡 마케팅",tiers:[t("협의", "알림받기 고객 모집, 톡톡 메시지와 재구매 쿠폰 운영", 0, "월", {consult:true})]},
-  {id:"crmSegment",name:"CRM 고객 분석, 재구매 캠페인",tiers:[t("협의", "첫 구매, 재구매, 휴면 고객으로 나눠 그룹별 캠페인 실행", 0, "월", {consult:true})]},
+ {id:"aim-retention",projectCategory:"국내마케팅",name:"리텐션과 CRM (에임)",items:[
+  {id:"kakaoChannel",name:"카카오톡 채널 운영",tiers:[t("협의", "채널 친구 모집부터 정기 메시지, 쿠폰 발송까지", 0, "월", {consult:true})]},
+  {id:"alimtalkFlow",name:"알림톡 자동화",tiers:[t("협의", "구매 후 안내, 후기 요청, 재구매 알림 자동화 설계와 세팅", 0, "식", {consult:true})]},
+  {id:"storeNotify",name:"스마트스토어 알림받기와 톡톡 마케팅",tiers:[t("협의", "알림받기 고객 모집, 톡톡 메시지와 재구매 쿠폰 운영", 0, "월", {consult:true})]},
+  {id:"crmSegment",name:"CRM 재구매 캠페인",tiers:[t("협의", "첫 구매, 재구매, 휴면 고객으로 나눠 그룹별 캠페인 실행", 0, "월", {consult:true})]},
   {id:"retargetAd",name:"리타겟팅 광고 운영",tiers:[t("협의", "구매자, 장바구니 이탈자, 방문자 대상 리타겟팅. 매체비는 광고주 부담", 0, "월", {consult:true})]},
-  {id:"membership",name:"멤버십, 적립금 설계",tiers:[t("협의", "등급, 적립금, 재구매 쿠폰 구조 설계와 자사몰 세팅", 0, "식", {consult:true})]},
-  {id:"subscription",name:"정기구독, 재구매 상품 구성",tiers:[t("협의", "정기배송, 묶음 상품 구성과 구독 결제 세팅", 0, "식", {consult:true})]},
-  {id:"reviewEvent",name:"후기, 포토리뷰 이벤트 운영",tiers:[t("협의", "후기 이벤트 운영, 모인 후기를 상세페이지와 SNS 에 재활용", 0, "회", {consult:true})]},
+  {id:"membership",name:"멤버십과 적립금 설계",tiers:[t("협의", "등급, 적립금, 재구매 쿠폰 구조 설계와 자사몰 세팅", 0, "식", {consult:true})]},
+  {id:"subscription",name:"정기구독 상품 구성",tiers:[t("협의", "정기배송, 묶음 상품 구성과 구독 결제 세팅", 0, "식", {consult:true})]},
+  {id:"reviewEvent",name:"포토리뷰 이벤트 운영",tiers:[t("협의", "후기 이벤트 운영, 모인 후기를 상세페이지와 SNS 에 재활용", 0, "회", {consult:true})]},
   {id:"referral",name:"추천인 프로그램 설계",tiers:[t("협의", "친구 추천 보상 구조, 추천 링크와 쿠폰 발급 세팅", 0, "식", {consult:true})]},
-  {id:"newsletter",name:"뉴스레터, 이메일 마케팅",tiers:[t("협의", "정기 뉴스레터와 구매 후 이메일 기획, 발송", 0, "월", {consult:true})]},
+  {id:"newsletter",name:"뉴스레터와 이메일 마케팅",tiers:[t("협의", "정기 뉴스레터와 구매 후 이메일 기획, 발송", 0, "월", {consult:true})]},
   {id:"community",name:"브랜드 커뮤니티 운영",tiers:[t("협의", "오픈채팅, 카페, 인스타그램 고객 모임 운영", 0, "월", {consult:true})]}
  ]},
  {id:"china",projectCategory:"중국마케팅",name:"중국 마케팅",items:[
@@ -168,7 +168,7 @@ export const CATALOG: CatalogCategory[] = [
  ]},
  {id:"japan",projectCategory:"컨설팅",name:"일본 마케팅",items:[
   {id:"gmap",name:"구글맵 + N플레이스",tiers:[t("스타터-1","업체 등록 세팅",200000,"건"),t("스타터-2","등록, 구글애즈 3개월 (CPC 60만 원 포함)",1000000,"건"),t("스타터-3","등록, 구글애즈 1년 (CPC 100만 원 포함)",2500000,"건"),t("어드밴스-1","스타터-2에 체험단 5팀 추가",2500000,"건"),t("어드밴스-2","스타터-3에 체험단, 기자단 각 10팀 추가",3500000,"건")]},
-  {id:"jpsns",name:"인스타그램, 틱톡 체험단 (일본)",tiers:[t("스타터","체험단 5팀",800000,"건"),t("어드밴스","체험단 10팀",1200000,"건"),t("마스터","팔로워 1만 이상 체험단 5팀",2500000,"건")]},
+  {id:"jpsns",name:"인스타그램과 틱톡 체험단 (일본)",tiers:[t("스타터","체험단 5팀",800000,"건"),t("어드밴스","체험단 10팀",1200000,"건"),t("마스터","팔로워 1만 이상 체험단 5팀",2500000,"건")]},
   {id:"gmapreview",name:"구글맵 리뷰",tiers:[t("단일","구글 리뷰 작성",4000,"건",{q:100,min:100})]},
   {id:"japanfull",name:"일본 마케팅 풀코스",tiers:[t("풀코스","구글맵, N플레이스 등록, 구글애즈 3개월, 체험단 5팀 이상, 1:1 관리, 메뉴판과 판촉물, 가로 영상",3000000,"건")]},
   {id:"jpdesign",name:"일본어 번역 디자인",tiers:[t("Normal","메뉴판, 간판, 배너, 이벤트 인쇄물, 설명서 (출력비 별도)",30000,"페이지",{q:2})]},

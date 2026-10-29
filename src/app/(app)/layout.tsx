@@ -15,7 +15,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const members = mock ? await listMembers() : [];
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-50 border-b border-line bg-canvas/70 backdrop-blur-[24px]">
+      <header className="no-print sticky top-0 z-50 border-b border-line bg-canvas/70 backdrop-blur-[24px]">
         <div className="mx-auto flex min-h-[64px] max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
           {/* 로고 락업: PLANDER 워드마크 + 세로선 + 제품명 */}
           <Link href="/interviews" className="flex items-center gap-3" aria-label="PLANDER 인터뷰 홈">

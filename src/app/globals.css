@@ -154,3 +154,15 @@
     mask: url(/brand/plander-wordmark.png) center / contain no-repeat;
   }
 }
+
+/* 인쇄: 견적서와 제안서를 A4 로 뽑습니다. 화면 장식과 버튼은 빼고 흰 종이에 잉크로만 찍습니다. */
+@media print {
+  @page { size: A4; margin: 12mm; }
+  .no-print, .grain, .ambient { display: none !important; }
+  html, body { background: #fff !important; color: #0B0B0D !important; }
+  .print-plain { background: #fff !important; padding: 0 !important; }
+  .quote-sheet { padding: 0 !important; max-width: none !important; box-shadow: none !important; border: 0 !important; }
+  .print-break { break-before: page; }
+  .print-avoid { break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

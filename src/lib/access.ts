@@ -1,3 +1,4 @@
+import { resolveQuote } from "./quote";
 import type { Interview, Member, SharedInterview } from "./types";
 
 /**
@@ -19,7 +20,7 @@ export function canEdit(i: Interview, me: Member): boolean {
 }
 
 /** 고객 공유 링크에 내려갈 정보. 내부 메모, 외부 협력, 연락처, 위험 요소는 넣지 않습니다. */
-export function toShared(i: Interview): SharedInterview {
+export function toShared(i: Interview, ownerName = ""): SharedInterview {
   const s = i.shareSections;
   return {
     title: i.title,
@@ -46,6 +47,10 @@ export function toShared(i: Interview): SharedInterview {
     summary: s.summary ? i.summary.external : undefined,
     planderItems: s.plander || s.estimate ? i.planderItems : undefined,
     nextActions: s.nextActions ? i.summary.nextActions.map((a) => ({ text: a.text, due: a.due })) : undefined,
+    // 견적서는 예상 금액을 공유할 때만 내려갑니다. 수신자는 고객 본인이라 연락처를 넣습니다.
+    quote: s.estimate
+      ? resolveQuote({ id: i.id, title: i.title, clientName: i.clientName, counterparts: i.counterparts, region: i.business.region, quote: i.quote, ownerName })
+      : undefined,
     updatedAt: i.updatedAt,
   };
 }

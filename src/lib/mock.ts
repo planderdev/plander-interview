@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { defaultSections, emptyCheck } from "./options";
+import { defaultSections, emptyCheck, emptyQuote } from "./options";
 import type { ClientOption, Interview, Member } from "./types";
 
 const client = (id: string, name: string, o: Partial<ClientOption> = {}): ClientOption => ({
@@ -33,7 +33,7 @@ function seed(): Interview[] {
         { id: "c2", name: "오샘플", title: "매니저", phone: "", email: "", role: "practical", note: "SNS 직접 운영" },
       ],
       business: {
-        industry: "로컬, 오프라인 매장",
+        industry: "로컬 매장",
         model: "오프라인 매장",
         stage: "",
         funnel: ["aw", "co", "cv"],
@@ -45,7 +45,7 @@ function seed(): Interview[] {
       needs: {
         goals: ["매장 방문 늘리기", "검색에 잘 보이기", "외국인 고객 모으기"],
         targets: ["30~40대", "여성 중심"],
-        wantChannels: ["네이버 블로그", "체험단, 리뷰"],
+        wantChannels: ["네이버 블로그", "체험단과 리뷰"],
         period: "3개월",
         constraints: ["광고 표기(#광고) 엄수"],
         pains: "오픈 직후 리뷰가 없어서 지도 검색에서 밀릴까 걱정",
@@ -80,6 +80,7 @@ function seed(): Interview[] {
       shareToken: "example-share-token",
       shareSections: { ...defaultSections(), estimate: true },
       check: { decisionMaker: true, budget: true, timeline: true, scope: false },
+      quote: emptyQuote(),
       clientId: null,
       projectId: null,
       convertedAt: null,
@@ -98,7 +99,7 @@ function seed(): Interview[] {
       clientName: "예시) 바다법률사무소",
       counterparts: [{ id: "c1", name: "한샘플", title: "사무장", phone: "", email: "sample@example.com", role: "practical", note: "" }],
       business: {
-        industry: "전문직 (변호사, 세무사)",
+        industry: "변호사와 세무사",
         model: "B2B",
         stage: "",
         funnel: ["co", "cv"],
@@ -107,7 +108,7 @@ function seed(): Interview[] {
         channels: ["홈페이지", "네이버 블로그"],
         description: "",
       },
-      needs: { goals: ["상담, 문의 늘리기"], targets: ["B2B"], wantChannels: [], period: "", constraints: [], pains: "홈페이지 문의가 월 2~3건", wish: "", timeline: "분기 안", budget: "미정", decisionBy: "" },
+      needs: { goals: ["상담 문의 늘리기"], targets: ["B2B"], wantChannels: [], period: "", constraints: [], pains: "홈페이지 문의가 월 2~3건", wish: "", timeline: "분기 안", budget: "미정", decisionBy: "" },
       planderItems: [],
       partnerItems: [],
       summary: { oneline: "", external: "", risks: "", nextActions: [], internalMemo: "대표 변호사 미팅 다시 잡아야 함" },
@@ -117,6 +118,7 @@ function seed(): Interview[] {
       shareToken: null,
       shareSections: defaultSections(),
       check: emptyCheck(),
+      quote: emptyQuote(),
       clientId: null,
       projectId: null,
       convertedAt: null,
@@ -146,8 +148,8 @@ function seedDb(): MockDb {
   return {
     interviews: seed(),
     clients: [
-      client("cl-1", "예시) 바다법률사무소", { industry: "전문직 (변호사, 세무사)", contactName: "한샘플", email: "sample@example.com", website: "https://example.com", address: "서울특별시 중구" }),
-      client("cl-2", "예시) 제주카페", { industry: "로컬, 오프라인 매장", contactName: "문예시", phone: "010-0000-0001", address: "제주특별자치도 제주시 연동" }),
+      client("cl-1", "예시) 바다법률사무소", { industry: "변호사와 세무사", contactName: "한샘플", email: "sample@example.com", website: "https://example.com", address: "서울특별시 중구" }),
+      client("cl-2", "예시) 제주카페", { industry: "로컬 매장", contactName: "문예시", phone: "010-0000-0001", address: "제주특별자치도 제주시 연동" }),
       client("cl-3", "예시) 오름베이커리", { industry: "커머스", contactName: "고샘플", phone: "010-0000-0002", website: "https://example.org", address: "제주특별자치도 서귀포시" }),
     ],
     projects: [

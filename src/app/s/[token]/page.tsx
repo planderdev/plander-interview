@@ -74,7 +74,17 @@ export default async function SharedPage({ params }: { params: Promise<{ token: 
       <div className="mx-auto grid max-w-[880px] gap-14 px-6 pb-20 pt-8 sm:px-10 sm:pt-10">
         <header className="flex items-center justify-between">
           <span className="wordmark text-[24px] sm:text-[30px]" style={{ color: C.ink }} role="img" aria-label="PLANDER" />
-          <span className="text-[11px] uppercase tracking-[0.12em]" style={{ color: C.soft }}>Meeting note</span>
+          {s.quote ? (
+            <a
+              href={`/s/${token}/quote`}
+              className="rounded-full border px-4 py-2 text-[13px] transition-colors hover:bg-[#0B0B0D] hover:text-white"
+              style={{ borderColor: C.ink }}
+            >
+              견적서 보기
+            </a>
+          ) : (
+            <span className="text-[11px] uppercase tracking-[0.12em]" style={{ color: C.soft }}>Meeting note</span>
+          )}
         </header>
 
         <div className="grid gap-5">
@@ -183,6 +193,15 @@ export default async function SharedPage({ params }: { params: Promise<{ token: 
               <p className="text-[13px] leading-[1.65]" style={{ color: C.soft }}>
                 플랜더 단가표를 기준으로 계산한 예상 금액입니다. 광고 매체비는 포함하지 않으며, 범위와 금액은 상담 후 함께 확정합니다.
               </p>
+            )}
+            {s.quote && (
+              <a
+                href={`/s/${token}/quote`}
+                className="w-fit rounded-full px-5 py-2.5 text-[13px] font-medium text-white transition-colors hover:opacity-85"
+                style={{ background: C.ink }}
+              >
+                견적서 보기
+              </a>
             )}
           </Block>
         )}

@@ -150,7 +150,7 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
             ["사업 형태", iv.business.model],
             ["보강할 마케팅 단계", stageLabels(iv.business.funnel).join(", ") || iv.business.stage],
             ["지역", iv.business.region],
-            ["웹사이트, SNS", iv.business.website],
+            ["웹사이트", iv.business.website],
             ["운영 채널", iv.business.channels.join(", ")],
             ["사업 설명", iv.business.description],
           ]}
@@ -264,9 +264,9 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
         <Rows
           rows={[
             ["내부 공유 범위", `${SCOPE_META[iv.internalScope].label}. ${SCOPE_META[iv.internalScope].desc}`],
-            ["외부 공유", iv.shareEnabled ? `켜짐. 고객에게 보이는 항목: ${sharedOn.map((k) => SHARE_SECTION_LABEL[k]).join(", ") || "없음"}` : "꺼짐"],
-            ["전환 준비", `${r.done}/${r.total}. 빠진 것: ${r.items.filter((x) => !x.ok).map((x) => x.label).join(", ") || "없음"}`],
-            ["의뢰 전환", iv.projectId ? `전환함 (${iv.convertedAt?.slice(0, 10) ?? ""})` : "아직 전환하지 않음"],
+            ["외부 공유", iv.shareEnabled ? `켜져 있습니다. 고객에게 보이는 항목은 ${sharedOn.map((k) => SHARE_SECTION_LABEL[k]).join(", ") || "없습니다"}${sharedOn.length ? "입니다" : ""}.` : "꺼져 있습니다."],
+            ["전환 준비", r.done === r.total ? "모두 확인했습니다." : `${r.total}개 중 ${r.done}개를 확인했습니다. 남은 것은 ${r.items.filter((x) => !x.ok).map((x) => x.label).join(", ")}입니다.`],
+            ["의뢰 전환", iv.projectId ? `${iv.convertedAt?.slice(0, 10) ?? ""}에 전환했습니다.` : "아직 전환하지 않았습니다."],
           ]}
         />
         {iv.projectId && WORKS_URL && (

@@ -118,6 +118,20 @@ export interface ConversionCheck {
   scope: boolean;
 }
 
+/** 견적서 정보. 비워 두면 인터뷰 내용으로 채웁니다. */
+export interface Quote {
+  title: string;
+  no: string;
+  date: string;
+  staffName: string;
+  staffContact: string;
+  recipientName: string;
+  recipientPhone: string;
+  recipientEmail: string;
+  recipientAddress: string;
+  note: string;
+}
+
 export interface Interview {
   id: string;
   title: string;
@@ -138,6 +152,7 @@ export interface Interview {
   shareToken: string | null;
   shareSections: ShareSections;
   check: ConversionCheck;
+  quote: Quote;
   /** 연결된 웍스 클라이언트. 인터뷰 중에 불러오거나, 의뢰 전환 때 새로 만들어 채웁니다. */
   clientId: string | null;
   projectId: string | null;
@@ -160,6 +175,8 @@ export interface SharedInterview {
   summary?: string;
   planderItems?: PlanderItem[];
   nextActions?: { text: string; due: string }[];
+  /** 예상 금액을 공유할 때만 내려갑니다. 견적서 페이지에 씁니다. */
+  quote?: Quote;
   updatedAt: string;
 }
 

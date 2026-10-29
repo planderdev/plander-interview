@@ -6,7 +6,7 @@ import { canEdit, canView, toShared } from "./access";
 import { cookies } from "next/headers";
 
 import { MOCK_MEMBERS, MOCK_USER_COOKIE, mockDb, mockMe, persistMock } from "./mock";
-import { defaultSections, emptyBusiness, emptyCheck, emptyNeeds, emptySummary } from "./options";
+import { defaultSections, emptyBusiness, emptyCheck, emptyNeeds, emptyQuote, emptySummary, relabel, relabelAll } from "./options";
 import { RPC, TABLES, isSupabaseConfigured } from "./supabase/config";
 import { createSupabaseServerClient } from "./supabase/server";
 import type { ClientHistory, ClientOption, Interview, Member, SharedInterview } from "./types";
@@ -38,6 +38,7 @@ function fromRow(r: Row): Interview {
     shareToken: (r.share_token as string | null) ?? null,
     shareSections: { ...defaultSections(), ...((r.share_sections as object) ?? {}) },
     check: { ...emptyCheck(), ...((r.conversion_check as object) ?? {}) },
+    quote: { ...emptyQuote(), ...((r.quote as object) ?? {}) },
     clientId: (r.client_id as string | null) ?? null,
     projectId: (r.project_id as string | null) ?? null,
     convertedAt: (r.converted_at as string | null) ?? null,
@@ -48,16 +49,27 @@ function fromRow(r: Row): Interview {
   };
 }
 
+/** 예전 선택지 이름으로 저장된 값을 지금 이름으로 바꿉니다. */
+function relabelInterview(i: Interview): Interview {
+  return {
+    ...i,
+    business: { ...i.business, industry: relabel(i.business.industry), model: relabel(i.business.model), channels: relabelAll(i.business.channels) },
+    needs: { ...i.needs, goals: relabelAll(i.needs.goals), wantChannels: relabelAll(i.needs.wantChannels) },
+    partnerItems: i.partnerItems.map((x) => ({ ...x, field: relabel(x.field) })),
+  };
+}
+
 /** 저장 파일에 예전 형식으로 남은 목업 기록에 새 칸의 기본값을 채웁니다. */
 function normalize(i: Interview): Interview {
-  return {
+  return relabelInterview({
     ...i,
     business: { ...emptyBusiness(), ...i.business },
     needs: { ...emptyNeeds(), ...i.needs },
     summary: { ...emptySummary(), ...i.summary },
     shareSections: { ...defaultSections(), ...i.shareSections },
     check: { ...emptyCheck(), ...i.check },
-  };
+    quote: { ...emptyQuote(), ...i.quote },
+  });
 }
 
 /** 화면에서 고칠 수 있는 칸만 DB 행으로 옮깁니다. 전환 결과, 공유 토큰, 작성자는 여기서 바꾸지 않습니다. */
@@ -79,6 +91,7 @@ function toEditableRow(i: Interview): Row {
     internal_scope: i.internalScope,
     share_sections: i.shareSections,
     conversion_check: i.check,
+    quote: i.quote,
     // 전환 전에는 불러온 웍스 고객을 바꿀 수 있습니다. 전환 뒤에는 DB 트리거가 막습니다.
     client_id: i.projectId ? undefined : i.clientId,
   };
@@ -186,7 +199,7 @@ export async function listInterviews(me: Member): Promise<Interview[]> {
   // 볼 수 있는 행은 RLS(pi_can_view)가 거릅니다.
   const { data, error } = await sb.from(TABLES.interviews).select("*").order("updated_at", { ascending: false });
   if (error) throw new Error(error.message);
-  return (data ?? []).map(fromRow);
+  return (data ?? []).map((r) => relabelInterview(fromRow(r)));
 }
 
 export async function getInterview(me: Member, id: string): Promise<Interview | null> {
@@ -196,7 +209,7 @@ export async function getInterview(me: Member, id: string): Promise<Interview | 
     return i && canView(i, me) ? normalize(structuredClone(i)) : null;
   }
   const { data } = await sb.from(TABLES.interviews).select("*").eq("id", id).maybeSingle();
-  return data ? fromRow(data) : null;
+  return data ? relabelInterview(fromRow(data)) : null;
 }
 
 /** 미팅 일시는 한국 시각 그대로 저장합니다. (예: 2026-10-29T14:00) */
@@ -214,7 +227,7 @@ export async function createInterview(me: Member): Promise<string> {
       id, title, status: "draft", heldAt: kstNow(), place: "", method: "대면", clientName: "",
       counterparts: [], business: emptyBusiness(), needs: emptyNeeds(), planderItems: [], partnerItems: [],
       summary: emptySummary(), participantIds: [me.id], internalScope: "team", shareEnabled: false,
-      shareToken: null, shareSections: defaultSections(), check: emptyCheck(), clientId: null, projectId: null,
+      shareToken: null, shareSections: defaultSections(), check: emptyCheck(), quote: emptyQuote(), clientId: null, projectId: null,
       convertedAt: null, createdBy: me.id, updatedBy: me.id, createdAt: at, updatedAt: at,
     });
     persistMock();
@@ -302,7 +315,7 @@ export async function getShared(token: string): Promise<SharedInterview | null> 
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(token)) return null;
   if (!isSupabaseConfigured()) {
     const i = mockDb().interviews.find((x) => x.shareEnabled && x.shareToken === token);
-    return i ? toShared(normalize(i)) : null;
+    return i ? toShared(normalize(i), MOCK_MEMBERS.find((m) => m.id === i.createdBy)?.name) : null;
   }
   const sb = await createSupabaseServerClient();
   const { data, error } = await sb!.rpc(RPC.shared, { p_token: token });
