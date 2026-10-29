@@ -59,6 +59,7 @@ export function QuoteDocument({
                 <img
                   src={sealSrc}
                   alt="주식회사 플랜더 직인"
+                  data-seal
                   className="pointer-events-none -my-1.5 h-[40px] w-[40px] opacity-90 mix-blend-multiply"
                 />
               )}

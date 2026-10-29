@@ -183,3 +183,10 @@
 .quote-sheet.printing section { padding-top: 14px !important; padding-bottom: 14px !important; }
 .quote-sheet.printing td, .quote-sheet.printing th { padding-top: 6px !important; padding-bottom: 6px !important; }
 .quote-sheet.printing table { min-width: 0 !important; }
+
+/* PDF 잠금: 비밀번호를 넣지 않고 인쇄하면(Cmd+P 포함) 견적서 대신 안내 문구만 찍힙니다. */
+.print-lock-note { display: none; }
+@media print {
+  .pdf-locked .quote-sheet { display: none !important; }
+  .pdf-locked .print-lock-note { display: block !important; padding: 20mm; font-size: 14px; color: #0B0B0D; }
+}

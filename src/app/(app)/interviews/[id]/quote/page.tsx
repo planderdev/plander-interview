@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { PrintButton } from "@/components/print-button";
+import { PdfButton } from "@/components/pdf-button";
 import { FitA4 } from "@/components/fit-a4";
 import { QuoteDocument } from "@/components/quote-document";
 import { resolveQuote } from "@/lib/quote";
-import { SEAL_SRC, hasSeal } from "@/lib/seal";
+import { SEAL_SRC, isPdfUnlocked, pdfPasswordConfigured, sealAvailable } from "@/lib/seal";
 import { getInterview, getMe, listMembers } from "@/lib/store";
 
 export const metadata: Metadata = { title: "견적서", robots: { index: false, follow: false } };
@@ -28,10 +28,12 @@ export default async function QuotePreviewPage({ params }: { params: Promise<{ i
     quote: iv.quote,
     ownerName: members.find((m) => m.id === iv.createdBy)?.name,
   });
+  const unlocked = await isPdfUnlocked();
   const customerReady = iv.shareEnabled && iv.shareSections.estimate;
 
   return (
-    <div className="grid gap-4">
+    <div className={`grid gap-4 ${unlocked ? "" : "pdf-locked"}`}>
+      <p className="print-lock-note">견적서를 PDF로 뽑으려면 화면의 PDF로 뽑기 버튼을 누르고 비밀번호를 입력해 주세요.</p>
       <div className="no-print flex flex-wrap items-center gap-2">
         <Link href={`/interviews/${iv.id}#plander`} className="text-link text-sm text-sub">인터뷰로 돌아가기</Link>
         <span className="text-xs text-mute">
@@ -43,12 +45,12 @@ export default async function QuotePreviewPage({ params }: { params: Promise<{ i
           {customerReady && iv.shareToken && (
             <a className="btn btn-sm" href={`/s/${iv.shareToken}/quote`} target="_blank" rel="noreferrer">고객 화면으로 보기</a>
           )}
-          <PrintButton className="btn btn-sm btn-primary" />
+          <PdfButton unlocked={unlocked} configured={pdfPasswordConfigured()} className="btn btn-sm btn-primary" />
         </div>
       </div>
       <div className="print-plain rounded-[6px] bg-[#F1F2F6] p-2 sm:p-6">
         <div className="mx-auto max-w-[860px] rounded-[6px] border border-[#D8DDE6] print:border-0">
-          <QuoteDocument quote={quote} clientName={iv.clientName} items={iv.planderItems} sealSrc={hasSeal() ? SEAL_SRC : undefined} />
+          <QuoteDocument quote={quote} clientName={iv.clientName} items={iv.planderItems} sealSrc={unlocked && sealAvailable() ? SEAL_SRC : undefined} />
           <FitA4 targetId="quote-sheet" />
         </div>
       </div>

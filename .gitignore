@@ -9,4 +9,4 @@ node_modules.nosync
 next-env.d.ts
 .vercel
 .local-data
-public/brand/plander-seal.png
+private/

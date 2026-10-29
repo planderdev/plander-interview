@@ -1,6 +1,6 @@
 # 배포에 넣지 않는 것
 # 직인은 공개 주소로 퍼지지 않게 목업 배포에서 뺍니다.
-public/brand/plander-seal.png
+private/
 # 로컬 예시 데이터
 .local-data
 node_modules

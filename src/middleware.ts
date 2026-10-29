@@ -14,7 +14,8 @@ export async function middleware(request: NextRequest) {
   if (!url || !key) return NextResponse.next();
 
   const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/s/")) return NextResponse.next();
+  // 고객 공유와 직인(자체 쿠키 확인)은 로그인 없이 통과시킵니다.
+  if (pathname.startsWith("/s/") || pathname === "/api/seal") return NextResponse.next();
 
   let response = NextResponse.next({ request });
   const supabase = createServerClient(url, key, {
