@@ -286,7 +286,8 @@ export async function deleteInterview(me: Member, id: string): Promise<void> {
   if (!sb) {
     const db = mockDb();
     const i = db.interviews.find((x) => x.id === id);
-    if (!i || !(i.createdBy === me.id || me.role !== "user")) throw new Error("삭제 권한이 없습니다.");
+    // DB 정책 pi_interviews_delete 와 같게: 볼 수 있고, 작성자이거나 운영자 이상
+    if (!i || !canView(i, me) || !(i.createdBy === me.id || me.role !== "user")) throw new Error("삭제 권한이 없습니다.");
     db.interviews = db.interviews.filter((x) => x.id !== id);
     persistMock();
     return;
