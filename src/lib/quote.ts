@@ -50,3 +50,23 @@ export const SUPPLIER = {
   email: "contact@plander.io",
   address: "제주특별자치도 제주시 관덕로 44, 제주소통협력센터 404호",
 };
+
+/**
+ * 견적번호: 만든 달(YYYYMM)과 그 달에 만든 순서. 예: 202610-3
+ * DB 에서는 pi_interviews 의 insert 트리거가 같은 규칙으로 매깁니다.
+ */
+export function nextQuoteNo(existingNos: string[], createdAt: string): string {
+  const ym = kstMonth(createdAt);
+  const max = existingNos.reduce((m, no) => {
+    const hit = new RegExp(`^${ym}-(\\d+)$`).exec(no);
+    return hit ? Math.max(m, Number(hit[1])) : m;
+  }, 0);
+  return `${ym}-${max + 1}`;
+}
+
+/** ISO 시각을 한국 시각 기준 YYYYMM 으로 */
+export function kstMonth(iso: string): string {
+  const t = Date.parse(iso);
+  const d = new Date((Number.isNaN(t) ? Date.now() : t) + 9 * 3600_000);
+  return d.toISOString().slice(0, 7).replace("-", "");
+}

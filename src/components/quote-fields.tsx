@@ -56,7 +56,13 @@ export function QuoteFields({
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
         {field("title", "견적서 제목", { wide: true })}
-        {field("no", "견적번호")}
+        <div className="grid min-w-0 gap-1.5">
+          <span className="label">견적번호</span>
+          <span className="field num flex items-center text-sub" aria-label="자동으로 매긴 견적번호">
+            {q.no || d.no}
+          </span>
+          <span className="text-xs text-mute">인터뷰를 만든 달과 순서로 자동으로 매깁니다.</span>
+        </div>
         {field("date", "견적일자", { type: "date" })}
         {field("staffName", "담당자")}
         {field("staffContact", "담당자 연락처")}

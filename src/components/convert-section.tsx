@@ -134,7 +134,7 @@ export function ConvertSection({
       <div className="tile grid content-start gap-4 p-4">
         <h3 className="font-semibold">웍스로 의뢰 전환</h3>
         <p className="text-sm text-sub">
-          웍스에 클라이언트(관계 단계 상담중)와 프로젝트(상태 대기)를 만들고 이 인터뷰를 연결합니다. 요약, 원하는 일, 플랜더 항목이 프로젝트 설명에 들어갑니다.
+          웍스에 클라이언트(관계 단계 상담중)와 프로젝트(상태 대기)를 만들고 이 인터뷰를 연결합니다. 고객의 고민과 플랜더 항목이 프로젝트 설명에 들어갑니다.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="grid gap-1.5 sm:col-span-2">

@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { defaultSections, emptyCheck, emptyQuote } from "./options";
+import { nextQuoteNo } from "./quote";
 import type { ClientOption, Interview, Member } from "./types";
 
 const client = (id: string, name: string, o: Partial<ClientOption> = {}): ClientOption => ({
@@ -169,8 +170,22 @@ export function mockDb(): MockDb {
       loaded = null; // 파일이 깨졌으면 예시 데이터로 다시 시작합니다.
     }
     g.__piMock = loaded ?? seedDb();
+    backfillQuoteNos(g.__piMock);
   }
   return g.__piMock;
+}
+
+/** 견적번호가 없는 인터뷰에 만든 순서대로 번호를 매깁니다. */
+function backfillQuoteNos(db: MockDb) {
+  const sorted = [...db.interviews].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  let changed = false;
+  for (const i of sorted) {
+    i.quote = { ...emptyQuote(), ...i.quote };
+    if (i.quote.no) continue;
+    i.quote.no = nextQuoteNo(db.interviews.map((x) => x.quote?.no ?? ""), i.createdAt);
+    changed = true;
+  }
+  if (changed) persistMock();
 }
 
 /** 목업 데이터를 바꾼 뒤 부릅니다. 쓰기가 막힌 환경(배포 미리보기 등)에서는 메모리에만 둡니다. */

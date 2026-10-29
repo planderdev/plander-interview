@@ -162,11 +162,6 @@ export default async function ProposalPage({ params }: { params: Promise<{ id: s
                 {author ? `${author.name} ${author.position || ROLE_LABEL[author.role]}` : "담당자"}이고, {koDate(kstToday())}에 정리했습니다.
               </p>
             </div>
-            {iv.summary.oneline && (
-              <div className="rounded-[18px] p-6 text-[17px] leading-[1.6]" style={{ background: C.ink, color: "#F3F2EE" }}>
-                {iv.summary.oneline}
-              </div>
-            )}
           </header>
 
           <Block label="Understanding" no={++no} title="고객 이해">
@@ -389,8 +384,7 @@ export default async function ProposalPage({ params }: { params: Promise<{ id: s
             </Block>
           )}
 
-          <Block label="Risks" no={++no} title="위험과 확인할 것">
-            {iv.summary.risks ? <Quote>{iv.summary.risks}</Quote> : <P>미팅에서 적어 둔 위험 요소는 없습니다.</P>}
+          <Block label="Check" no={++no} title="확인할 것">
             {n.constraints.length > 0 && <P>고객이 정한 제약 조건은 {listKo(n.constraints)}입니다. 실행안은 이 조건을 지킵니다.</P>}
             {r.items.some((x) => !x.ok) ? (
               <div className="grid gap-2">
@@ -401,26 +395,6 @@ export default async function ProposalPage({ params }: { params: Promise<{ id: s
               </div>
             ) : (
               <P>의뢰 전환에 필요한 확인은 모두 끝났습니다.</P>
-            )}
-          </Block>
-
-          <Block label="Next" no={++no} title="다음 단계">
-            {iv.summary.nextActions.length ? (
-              <ol className="grid gap-2 text-[15px]">
-                {iv.summary.nextActions.map((a, i) => (
-                  <li key={a.id} className="grid grid-cols-[2rem_minmax(0,1fr)] items-baseline">
-                    <span className="font-mono text-[12px]" style={{ color: C.soft }}>{String(i + 1).padStart(2, "0")}</span>
-                    <span>
-                      {a.text || "내용 없음"}
-                      <span className="ml-2 text-[13px]" style={{ color: C.soft }}>
-                        {nameOf(a.ownerId)} 담당입니다.{a.due ? ` ${koDate(a.due)}까지 합니다.` : ""}{a.done ? " 끝냈습니다." : ""}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <P>정해진 다음 할 일이 없습니다. 인터뷰의 요약 정리에서 담당자와 기한을 정해 주세요.</P>
             )}
           </Block>
 

@@ -58,7 +58,7 @@ export const stageLabels = (keys: string[]) =>
 
 /**
  * 단가표 항목별 추천 퍼널 단계 (앞이 주 단계). 에임 상품 구조의 STAGE_FIT 을 이 앱의 항목 id 에 맞췄습니다.
- * 에임에 없는 항목(중국, 일본, 브랜딩 등)은 같은 역할의 상품을 기준으로 정했습니다.
+ * 에임에 없는 항목(중국 마케팅과 브랜딩)은 같은 역할의 상품을 기준으로 정했습니다.
  */
 export const STAGE_FIT: Record<string, StageKey[]> = {
   // 검색광고
@@ -128,14 +128,6 @@ export const STAGE_FIT: Record<string, StageKey[]> = {
   cnvideo: ["co", "cv"],
   cnsub: ["co"],
   cnkiosk: ["cv"],
-  // 일본
-  gmap: ["co", "cv"],
-  jpsns: ["aw", "co"],
-  gmapreview: ["cv", "co"],
-  japanfull: ["aw", "co"],
-  jpdesign: ["cv"],
-  jpvideo: ["aw", "in"],
-  jpplatform: ["cv", "re"],
   // 에임 상품 구조 (판매가 협의)
   cafe24: ["cv", "re"],
   trafficSlot: ["co", "cv"],
@@ -224,11 +216,6 @@ export const STAGE_REASON: Record<string, string> = {
   dianping: "중국 관광객이 식당과 매장을 고를 때 가장 먼저 보는 곳입니다.",
   xhs: "중국 소비자가 여행 전에 찾아보는 후기 채널에서 처음 알립니다.",
   chinafull: "중국 관광객이 알게 되는 순간부터 매장을 고르는 순간까지 한 번에 챙깁니다.",
-  gmap: "일본 관광객은 구글맵으로 갈 곳을 고릅니다. 그 지도에 보이도록 합니다.",
-  jpsns: "일본 소비자가 보는 인스타그램과 틱톡에서 처음 알립니다.",
-  gmapreview: "방문 직전에 확인하는 구글 리뷰를 채웁니다.",
-  japanfull: "일본 관광객이 알게 되는 순간부터 방문하는 순간까지 한 번에 챙깁니다.",
-  jpplatform: "일본 온라인몰에 입점해 현지 고객이 바로 살 수 있게 합니다.",
   snsOwn: "브랜드가 직접 가진 채널입니다. 관심 고객이 머물고 기존 고객과 계속 만나는 접점이 됩니다.",
   boost: "좋은 콘텐츠도 초기 도달이 없으면 묻힙니다. 처음 보는 사람에게 닿는 범위를 넓힙니다.",
   powerPage: "이미 팔로워가 모인 계정을 빌려 한 번에 넓게 알립니다.",

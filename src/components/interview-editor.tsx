@@ -22,7 +22,7 @@ import {
   TIMELINES,
 } from "@/lib/options";
 import { won } from "@/lib/estimate";
-import type { Business, ClientOption, Counterpart, Interview, Member, Needs, PartnerItem, Summary } from "@/lib/types";
+import type { Business, ClientOption, Counterpart, Interview, Member, Needs, PartnerItem } from "@/lib/types";
 
 import { ClientPicker } from "./client-picker";
 import { ConvertSection } from "./convert-section";
@@ -39,7 +39,6 @@ const NAV = [
   ["needs", "원하는 일"],
   ["plander", "플랜더가 할 일"],
   ["partners", "외부 협력"],
-  ["summary", "요약 정리"],
   ["share", "공유 범위"],
   ["convert", "의뢰 전환"],
 ] as const;
@@ -122,7 +121,6 @@ export function InterviewEditor({
 
   const setBiz = (p: Partial<Business>) => update((cur) => ({ business: { ...cur.business, ...p } }));
   const setNeeds = (p: Partial<Needs>) => update((cur) => ({ needs: { ...cur.needs, ...p } }));
-  const setSum = (p: Partial<Summary>) => update((cur) => ({ summary: { ...cur.summary, ...p } }));
   const setCp = (id: string, p: Partial<Counterpart>) =>
     update((cur) => ({ counterparts: cur.counterparts.map((c) => (c.id === id ? { ...c, ...p } : c)) }));
   const setPartner = (id: string, p: Partial<PartnerItem>) =>
@@ -504,67 +502,8 @@ export function InterviewEditor({
           {partnerTotal > 0 && <p className="num text-right text-sm text-sub">외부 협력 예상 비용 합계 {won(partnerTotal)}</p>}
         </Section>
 
-        {/* 07 요약 정리 */}
-        <Section id="summary" no={7} title="요약 정리" desc="내부용 요약과 고객에게 보여 줄 정리를 나눠 씁니다.">
-          <div className="grid gap-4">
-            <Field label="한 줄 요약 (내부)" htmlFor="oneline">
-              <input id="oneline" className="field" value={iv.summary.oneline} placeholder="예: 오픈 첫 달 플레이스, 리뷰, 중국 체험단. 예산 200만 원 안팎" onChange={(e) => setSum({ oneline: e.target.value })} readOnly={readOnly} />
-            </Field>
-            <Field label="고객에게 보여 줄 정리" htmlFor="external">
-              <textarea
-                id="external"
-                className="field min-h-[130px]"
-                value={iv.summary.external}
-                placeholder="고객 공유 링크의 '미팅 정리'에 그대로 보입니다. 들은 내용과 플랜더가 제안하는 방향을 고객의 눈높이로 적어 주세요."
-                onChange={(e) => setSum({ external: e.target.value })}
-                readOnly={readOnly}
-              />
-            </Field>
-            <Field label="위험 요소 (내부)" htmlFor="risks">
-              <textarea id="risks" className="field" value={iv.summary.risks} placeholder="예: 오픈 일정이 밀리면 체험단도 밀림" onChange={(e) => setSum({ risks: e.target.value })} readOnly={readOnly} />
-            </Field>
-
-            <div className="grid gap-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="label">다음 할 일</span>
-                {!readOnly && (
-                  <button
-                    type="button"
-                    className="btn btn-sm"
-                    onClick={() => setSum({ nextActions: [...iv.summary.nextActions, { id: uid(), text: "", ownerId: me.id, due: "", done: false }] })}
-                  >
-                    할 일 추가
-                  </button>
-                )}
-              </div>
-              {iv.summary.nextActions.length === 0 && <p className="text-sm text-mute">제안서 전달, 견적 확인처럼 미팅 뒤에 할 일을 담당자와 함께 적어 두세요.</p>}
-              <ul className="grid gap-2">
-                {iv.summary.nextActions.map((a) => {
-                  const setA = (p: Partial<typeof a>) =>
-                    setSum({ nextActions: iv.summary.nextActions.map((x) => (x.id === a.id ? { ...x, ...p } : x)) });
-                  return (
-                    <li key={a.id} className="flex flex-wrap items-center gap-2">
-                      <input type="checkbox" className="h-4 w-4 accent-[hsl(var(--prism))]" aria-label="완료" checked={a.done} onChange={(e) => setA({ done: e.target.checked })} disabled={readOnly} />
-                      <input className={`field min-w-[12rem] flex-1 ${a.done ? "text-mute line-through" : ""}`} aria-label="할 일" value={a.text} onChange={(e) => setA({ text: e.target.value })} readOnly={readOnly} />
-                      <select className="field w-auto" aria-label="담당자" value={a.ownerId} onChange={(e) => setA({ ownerId: e.target.value })} disabled={readOnly}>
-                        {members.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
-                      </select>
-                      <input className="field w-auto" type="date" aria-label="기한" value={a.due} onChange={(e) => setA({ due: e.target.value })} readOnly={readOnly} />
-                      <RemoveButton label="할 일 삭제" onClick={() => setSum({ nextActions: iv.summary.nextActions.filter((x) => x.id !== a.id) })} disabled={readOnly} />
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            <Field label="내부 메모" htmlFor="memo">
-              <textarea id="memo" className="field" value={iv.summary.internalMemo} placeholder="가격 반응, 분위기, 내부에서만 알아야 할 것" onChange={(e) => setSum({ internalMemo: e.target.value })} readOnly={readOnly} />
-            </Field>
-          </div>
-        </Section>
-
-        {/* 08 공유 범위 */}
-        <Section id="share" no={8} title="공유 범위" desc="플랜더 안에서 누가 볼지, 고객에게 무엇을 보여 줄지 정합니다.">
+        {/* 07 공유 범위 */}
+        <Section id="share" no={7} title="공유 범위" desc="플랜더 안에서 누가 볼지, 고객에게 무엇을 보여 줄지 정합니다.">
           <ShareSection
             interview={iv}
             onChange={update}
@@ -579,8 +518,8 @@ export function InterviewEditor({
           />
         </Section>
 
-        {/* 09 의뢰 전환 */}
-        <Section id="convert" no={9} title="의뢰 전환" desc="미팅이 의뢰로 이어지면 웍스에 클라이언트와 프로젝트를 만듭니다.">
+        {/* 08 의뢰 전환 */}
+        <Section id="convert" no={8} title="의뢰 전환" desc="미팅이 의뢰로 이어지면 웍스에 클라이언트와 프로젝트를 만듭니다.">
           <ConvertSection
             interview={iv}
             clients={clients}

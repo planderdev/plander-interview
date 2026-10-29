@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react";
 
 import { shareAction } from "@/app/(app)/interviews/[id]/actions";
-import { SCOPE_META, SHARE_SECTION_LABEL } from "@/lib/options";
+import { SCOPE_META, SHARE_KEYS, SHARE_SECTION_LABEL } from "@/lib/options";
 
 import { CopyButton } from "./copy-button";
 import type { InternalScope, Interview, ShareSections } from "@/lib/types";
@@ -96,10 +96,10 @@ export function ShareSection({
           </button>
         </div>
         <p className="text-sm text-sub">
-          로그인 없이 열리는 읽기 전용 페이지입니다. 아래에서 고른 항목만 보입니다. 상대측 연락처, 외부 협력, 내부 메모, 위험 요소는 고르지 않아도 항상 빠집니다.
+          로그인 없이 열리는 읽기 전용 페이지입니다. 아래에서 고른 항목만 보입니다. 상대측 연락처와 외부 협력, 내부 메모는 고르지 않아도 항상 빠집니다.
         </p>
         <div className="flex flex-wrap gap-2" role="group" aria-label="고객에게 보여 줄 항목">
-          {(Object.keys(SHARE_SECTION_LABEL) as (keyof ShareSections)[]).map((k) => (
+          {SHARE_KEYS.map((k) => (
             <button
               key={k}
               type="button"
@@ -112,9 +112,6 @@ export function ShareSection({
             </button>
           ))}
         </div>
-        {interview.shareSections.summary && !interview.summary.external.trim() && (
-          <p className="text-sm text-warning">요약 정리의 "고객에게 보여 줄 정리"가 비어 있어 미팅 정리 칸이 빈 채로 보입니다.</p>
-        )}
         {link && (
           <div className="grid gap-2">
             <input className="field num text-xs" readOnly value={link} aria-label="고객 공유 링크" onFocus={(e) => e.currentTarget.select()} />

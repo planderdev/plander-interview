@@ -95,7 +95,7 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
           <span className="text-sm text-sub">{iv.clientName || "고객사 미입력"}{linked && ", 플랜더웍스 고객"}</span>
           <h1 className="text-[26px] font-semibold tracking-[-0.035em] sm:text-[32px]">{iv.title}</h1>
         </div>
-        <p className="text-[16px] leading-[1.7]">{iv.summary.oneline || <span className="text-mute">한 줄 요약이 아직 없습니다.</span>}</p>
+        {iv.needs.wish && <p className="text-[16px] leading-[1.7]">{iv.needs.wish}</p>}
         <p className="text-xs text-mute">
           {SCOPE_META[iv.internalScope].desc} 작성 {nameOf(iv.createdBy)}
           {iv.updatedBy && `, 마지막 수정 ${nameOf(iv.updatedBy)}`}, <span className="num">{iv.updatedAt.slice(0, 16).replace("T", " ")}</span>
@@ -230,34 +230,6 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
             {partnerTotal > 0 && <li className="num text-right text-sm text-sub">협력 예상 비용 합계 {won(partnerTotal)}</li>}
           </ul>
         )}
-      </Block>
-
-      <Block label="Summary" no={++no} title="요약 정리">
-        <Rows
-          rows={[
-            ["고객에게 보여 줄 정리", iv.summary.external],
-            ["위험 요소", iv.summary.risks],
-            ["내부 메모", iv.summary.internalMemo],
-          ]}
-        />
-        <div className="grid gap-2 border-t border-line pt-4">
-          <span className="label">다음 할 일</span>
-          {iv.summary.nextActions.length === 0 ? (
-            <p className="text-sm text-mute">정해진 할 일이 없습니다.</p>
-          ) : (
-            <ul className="grid gap-1.5 text-[14px]">
-              {iv.summary.nextActions.map((a) => (
-                <li key={a.id} className="flex flex-wrap items-baseline gap-x-3">
-                  <span className={`dot ${a.done ? "text-success" : "text-mute"}`} aria-hidden />
-                  <span className={a.done ? "text-mute line-through" : ""}>{a.text}</span>
-                  <span className="text-sub">{nameOf(a.ownerId)}</span>
-                  {a.due && <span className="num text-xs text-mute">{a.due}까지</span>}
-                  <span className="sr-only">{a.done ? "완료" : "진행 전"}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
       </Block>
 
       <Block label="Sharing" no={++no} title="공유와 의뢰 전환">

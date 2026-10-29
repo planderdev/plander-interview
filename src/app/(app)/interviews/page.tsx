@@ -28,7 +28,7 @@ export default async function InterviewsPage({
     (i) =>
       (!status || i.status === status) &&
       (!mine || i.createdBy === me.id || i.participantIds.includes(me.id)) &&
-      (!needle || `${i.title} ${i.clientName} ${i.summary.oneline}`.toLowerCase().includes(needle)),
+      (!needle || `${i.title} ${i.clientName} ${i.needs.pains} ${i.needs.wish}`.toLowerCase().includes(needle)),
   );
   const counts = Object.fromEntries(STATUS_ORDER.map((s) => [s, all.filter((i) => i.status === s).length]));
   const href = (p: Record<string, string>) => {
@@ -64,7 +64,7 @@ export default async function InterviewsPage({
         </div>
         <form className="flex flex-wrap gap-2" action="/interviews">
           {status && <input type="hidden" name="status" value={status} />}
-          <input className="field max-w-xs" name="q" id="q" defaultValue={q} placeholder="고객사, 제목, 요약 검색" />
+          <input className="field max-w-xs" name="q" id="q" defaultValue={q} placeholder="고객사나 제목으로 찾기" />
           <label className="toggle-chip" aria-pressed={Boolean(mine)}>
             <input type="checkbox" name="mine" value="1" defaultChecked={Boolean(mine)} className="accent-current" />
             내가 참여한 것만
@@ -93,7 +93,7 @@ export default async function InterviewsPage({
                     </div>
                     <span className="chip shrink-0"><span className={`dot ${STATUS_META[i.status].tone}`} aria-hidden />{STATUS_META[i.status].label}</span>
                   </div>
-                  <p className="line-clamp-2 min-h-[2.8em] text-sm text-sub">{i.summary.oneline || "아직 요약이 없습니다."}</p>
+                  <p className="line-clamp-2 min-h-[2.8em] text-sm text-sub">{i.needs.wish || i.needs.pains || "아직 원하는 일을 적지 않았습니다."}</p>
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-mute">
                     <span className="num">{i.heldAt ? i.heldAt.replace("T", " ") : "일시 미정"}</span>
                     <span>작성 {nameOf(i.createdBy)}</span>

@@ -61,7 +61,6 @@ export default async function SharedPage({ params }: { params: Promise<{ token: 
   const est = s.planderItems ? estimate(s.planderItems) : null;
   const showPrice = s.sections.estimate;
   const showItems = Boolean(est && est.lines.length > 0 && (s.sections.plander || showPrice));
-  const actions = (s.nextActions ?? []).filter((a) => a.text.trim());
   const date = s.heldAt ? s.heldAt.slice(0, 10).replace(/-/g, ".") : "";
   let no = 0;
 
@@ -104,14 +103,6 @@ export default async function SharedPage({ params }: { params: Promise<{ token: 
             {" "}들려주신 이야기와 플랜더가 함께할 일을 정리했습니다.
           </p>
         </div>
-
-        {s.sections.summary && (
-          <Block label="Summary" no={++no} title="미팅 정리">
-            <p className="whitespace-pre-line text-[16px] leading-[1.75] sm:text-[17px]">
-              {s.summary?.trim() || "정리 내용을 준비하고 있습니다."}
-            </p>
-          </Block>
-        )}
 
         {s.needs && (
           <Block label="Needs" no={++no} title="원하시는 일">
@@ -203,22 +194,6 @@ export default async function SharedPage({ params }: { params: Promise<{ token: 
                 견적서 보기
               </a>
             )}
-          </Block>
-        )}
-
-        {actions.length > 0 && (
-          <Block label="Next" no={++no} title="다음 단계">
-            <ol className="grid gap-3">
-              {actions.map((a, i) => (
-                <li key={i} className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-baseline gap-2 text-[15px] leading-[1.65]">
-                  <span className="font-mono text-[12px] tracking-[0.06em]" style={{ color: C.soft }}>{String(i + 1).padStart(2, "0")}</span>
-                  <span>
-                    {a.text}
-                    {a.due && <span className="ml-2 text-[13px]" style={{ color: C.soft }}>{a.due.replace(/-/g, ".")}까지</span>}
-                  </span>
-                </li>
-              ))}
-            </ol>
           </Block>
         )}
 

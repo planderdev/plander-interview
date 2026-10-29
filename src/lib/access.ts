@@ -44,9 +44,9 @@ export function toShared(i: Interview, ownerName = ""): SharedInterview {
           decisionBy: "",
         }
       : undefined,
-    summary: s.summary ? i.summary.external : undefined,
+    summary: undefined,
     planderItems: s.plander || s.estimate ? i.planderItems : undefined,
-    nextActions: s.nextActions ? i.summary.nextActions.map((a) => ({ text: a.text, due: a.due })) : undefined,
+    nextActions: undefined,
     // 견적서는 예상 금액을 공유할 때만 내려갑니다. 수신자는 고객 본인이라 연락처를 넣습니다.
     quote: s.estimate
       ? resolveQuote({ id: i.id, title: i.title, clientName: i.clientName, counterparts: i.counterparts, region: i.business.region, quote: i.quote, ownerName })
@@ -63,7 +63,6 @@ export function readiness(i: Interview) {
     { label: "보강할 마케팅 단계 선택", ok: i.business.funnel.length > 0 },
     { label: "원하는 일 기록", ok: i.needs.goals.length > 0 || Boolean(i.needs.wish.trim()) },
     { label: "플랜더 항목 1개 이상", ok: i.planderItems.length > 0 },
-    { label: "요약 작성", ok: Boolean(i.summary.oneline.trim()) },
     { label: "결정권자와 이야기함", ok: i.check.decisionMaker },
     { label: "예산 범위 확인", ok: i.check.budget },
     { label: "시작 시점 확인", ok: i.check.timeline },

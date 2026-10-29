@@ -105,20 +105,20 @@ export const GOALS = [
 export const BUDGETS = ["100만 원 이하", "100~300만 원", "300~500만 원", "500~1,000만 원", "1,000만 원 이상", "미정"];
 export const TIMELINES = ["바로 시작", "1개월 안", "분기 안", "미정"];
 
-export const PARTNER_FIELDS = ["인쇄", "촬영", "개발", "언론", "인플루언서", "현지(중국)", "현지(일본)", "법무와 세무", "기타"];
+export const PARTNER_FIELDS = ["인쇄", "촬영", "개발", "언론", "인플루언서", "현지(중국)", "법무와 세무", "기타"];
 export const PARTNER_STATUS: Record<PartnerItem["status"], string> = {
   todo: "확인 전",
   requested: "견적 요청",
   confirmed: "확정",
 };
 
-export const SHARE_SECTION_LABEL: Record<keyof ShareSections, string> = {
-  summary: "미팅 정리",
+/** 고객 공유에서 고를 수 있는 항목 */
+export const SHARE_KEYS = ["needs", "business", "plander", "estimate"] as const;
+export const SHARE_SECTION_LABEL: Partial<Record<keyof ShareSections, string>> = {
   business: "고객사 정보",
   needs: "원하시는 일",
   plander: "플랜더 제안 항목",
   estimate: "예상 금액",
-  nextActions: "다음 단계",
 };
 
 export const CHECK_LABEL: Record<keyof ConversionCheck, string> = {
@@ -148,7 +148,7 @@ export const emptyNeeds = (): Needs => ({
 });
 export const emptySummary = (): Summary => ({ oneline: "", external: "", risks: "", nextActions: [], internalMemo: "" });
 export const defaultSections = (): ShareSections => ({
-  summary: true, business: false, needs: true, plander: true, estimate: false, nextActions: true,
+  summary: false, business: false, needs: true, plander: true, estimate: false, nextActions: false,
 });
 export const DEFAULT_QUOTE_NOTE =
   "세부 제작 규격과 수량, 소재와 후가공 범위는 협의 후 확정합니다. 광고 매체비는 견적에 포함하지 않습니다.";

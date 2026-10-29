@@ -5,6 +5,7 @@ import { cache } from "react";
 import { canEdit, canView, toShared } from "./access";
 import { cookies } from "next/headers";
 
+import { nextQuoteNo } from "./quote";
 import { MOCK_MEMBERS, MOCK_USER_COOKIE, mockDb, mockMe, persistMock } from "./mock";
 import { defaultSections, emptyBusiness, emptyCheck, emptyNeeds, emptyQuote, emptySummary, relabel, relabelAll } from "./options";
 import { RPC, TABLES, isSupabaseConfigured } from "./supabase/config";
@@ -91,6 +92,7 @@ function toEditableRow(i: Interview): Row {
     internal_scope: i.internalScope,
     share_sections: i.shareSections,
     conversion_check: i.check,
+    // 견적번호는 DB 트리거가 매기고, 바꿔서 보내도 트리거가 원래 번호로 되돌립니다.
     quote: i.quote,
     // 전환 전에는 불러온 웍스 고객을 바꿀 수 있습니다. 전환 뒤에는 DB 트리거가 막습니다.
     client_id: i.projectId ? undefined : i.clientId,
@@ -227,7 +229,9 @@ export async function createInterview(me: Member): Promise<string> {
       id, title, status: "draft", heldAt: kstNow(), place: "", method: "대면", clientName: "",
       counterparts: [], business: emptyBusiness(), needs: emptyNeeds(), planderItems: [], partnerItems: [],
       summary: emptySummary(), participantIds: [me.id], internalScope: "team", shareEnabled: false,
-      shareToken: null, shareSections: defaultSections(), check: emptyCheck(), quote: emptyQuote(), clientId: null, projectId: null,
+      shareToken: null, shareSections: defaultSections(), check: emptyCheck(),
+      quote: { ...emptyQuote(), no: nextQuoteNo(mockDb().interviews.map((x) => x.quote?.no ?? ""), at) },
+      clientId: null, projectId: null,
       convertedAt: null, createdBy: me.id, updatedBy: me.id, createdAt: at, updatedAt: at,
     });
     persistMock();
@@ -255,6 +259,7 @@ export async function saveInterview(me: Member, next: Interview): Promise<{ upda
       status: cur.status === "converted" ? "converted" : next.status,
       shareEnabled: cur.shareEnabled,
       shareToken: cur.shareToken,
+      quote: { ...next.quote, no: cur.quote?.no || next.quote.no },
       clientId: cur.projectId ? cur.clientId : next.clientId,
       projectId: cur.projectId,
       convertedAt: cur.convertedAt,
