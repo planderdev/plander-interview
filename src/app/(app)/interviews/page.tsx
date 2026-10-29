@@ -84,8 +84,8 @@ export default async function InterviewsPage({
             const est = estimate(i.planderItems);
             const r = readiness(i);
             return (
-              <li key={i.id}>
-                <Link href={`/interviews/${i.id}`} className="card grid h-full gap-3 p-5 transition-colors duration-300 hover:border-ink/30">
+              <li key={i.id} className="relative">
+                <Link href={`/interviews/${i.id}`} className="card grid h-full gap-3 p-5 pb-14 transition-colors duration-300 hover:border-ink/30">
                   <div className="flex items-start justify-between gap-3">
                     <div className="grid min-w-0 gap-0.5">
                       <span className="truncate text-xs text-sub">{i.clientName || "고객사 미입력"}</span>
@@ -103,6 +103,11 @@ export default async function InterviewsPage({
                     <span className="num">전환 준비 {r.done}/{r.total}</span>
                   </div>
                 </Link>
+                {/* 카드 안쪽 아래에 놓인 바로가기. 카드 링크와 겹치지 않게 따로 둡니다. */}
+                <div className="absolute bottom-4 left-5 flex gap-2">
+                  <Link href={`/interviews/${i.id}/quote`} className="btn btn-sm">견적서 뽑기</Link>
+                  <Link href={`/interviews/${i.id}/proposal`} className="btn btn-sm">전략 제안서</Link>
+                </div>
               </li>
             );
           })}

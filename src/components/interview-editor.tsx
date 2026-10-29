@@ -186,12 +186,30 @@ export function InterviewEditor({
         {/* 머리글 */}
         <div className="flex flex-wrap items-center gap-3">
           <a href="/interviews" className="text-link text-sm text-sub">인터뷰 목록</a>
-          <a href={`/interviews/${iv.id}/brief`} className="btn btn-sm" onClick={(e) => { if (state !== "saved" && !readOnly) { e.preventDefault(); void save().then(() => { window.location.href = `/interviews/${iv.id}/brief`; }); } }}>
-            내부 공유 페이지
-          </a>
-          <a href={`/interviews/${iv.id}/proposal`} className="btn btn-sm" target="_blank" rel="noreferrer">
-            전략 제안서
-          </a>
+          {/* 문서 버튼: 저장되지 않은 변경이 있으면 저장한 뒤 엽니다. */}
+          {(
+            [
+              ["quote", "견적서 뽑기", true],
+              ["proposal", "전략 제안서", false],
+              ["brief", "내부 공유 페이지", false],
+            ] as const
+          ).map(([path, label, primary]) => (
+            <a
+              key={path}
+              href={`/interviews/${iv.id}/${path}`}
+              className={`btn btn-sm ${primary ? "btn-primary" : ""}`}
+              onClick={(e) => {
+                if (state !== "saved" && !readOnly) {
+                  e.preventDefault();
+                  void save().then(() => {
+                    window.location.href = `/interviews/${iv.id}/${path}`;
+                  });
+                }
+              }}
+            >
+              {label}
+            </a>
+          ))}
           <span className="chip ml-auto" role="status">
             <span
               className={`dot ${readOnly ? "text-mute" : state === "error" ? "text-danger" : state === "saved" ? "text-success" : "text-prism"}`}

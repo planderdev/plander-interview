@@ -51,7 +51,7 @@ export function QuoteFields({
           </span>
         </div>
         <a className="btn btn-sm btn-primary" href={`/interviews/${interview.id}/quote`} target="_blank" rel="noreferrer">
-          견적서 미리보기
+          견적서 뽑기
         </a>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
