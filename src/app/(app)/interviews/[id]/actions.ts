@@ -9,6 +9,7 @@ import {
   getClientHistory,
   getMe,
   saveInterview,
+  SaveConflictError,
   setShare,
   type ConvertInput,
 } from "@/lib/store";
@@ -30,12 +31,16 @@ async function requireMe() {
   return me;
 }
 
-export async function saveAction(next: Interview) {
-  return run(async () => {
-    const r = await saveInterview(await requireMe(), next);
+/** baseUpdatedAt 이 null 이면 다른 사람의 변경을 덮어씁니다. 충돌이면 conflict: true 를 돌려줍니다. */
+export async function saveAction(next: Interview, baseUpdatedAt: string | null) {
+  try {
+    const r = await saveInterview(await requireMe(), next, baseUpdatedAt);
     revalidatePath("/interviews");
-    return r;
-  });
+    return { ok: true as const, data: r };
+  } catch (e) {
+    if (e instanceof SaveConflictError) return { ok: false as const, error: e.message, conflict: true };
+    return { ok: false as const, error: e instanceof Error ? e.message : "알 수 없는 오류가 났습니다.", conflict: false };
+  }
 }
 
 export async function shareAction(id: string, enabled: boolean) {

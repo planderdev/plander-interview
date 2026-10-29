@@ -24,7 +24,7 @@ export function ConvertSection({
   readOnly: boolean;
   onChange: (patch: Partial<Interview>) => void;
   flush: () => Promise<boolean>;
-  onConverted: (clientId: string, projectId: string) => void;
+  onConverted: (clientId: string, projectId: string, updatedAt: string) => void;
 }) {
   const r = readiness(interview);
   const est = estimate(interview.planderItems);
@@ -90,7 +90,7 @@ export function ConvertSection({
         clientId: targetClient || null,
       });
       if (!res.ok) return setError(res.error);
-      onConverted(res.data.clientId, res.data.projectId);
+      onConverted(res.data.clientId, res.data.projectId, res.data.updatedAt);
     });
   }
 
