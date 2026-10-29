@@ -8,9 +8,12 @@ export function QuoteFields({
   interview,
   ownerName,
   onChange,
+  onOpenQuote,
   readOnly,
 }: {
   interview: Interview;
+  /** 저장한 뒤 같은 탭에서 견적서를 엽니다 */
+  onOpenQuote: () => void;
   ownerName: string;
   onChange: (q: Quote) => void;
   readOnly: boolean;
@@ -50,7 +53,14 @@ export function QuoteFields({
             위에서 고른 항목으로 플랜더 견적서 양식이 만들어집니다. 칸을 비워 두면 흐린 글씨로 보이는 값이 들어갑니다.
           </span>
         </div>
-        <a className="btn btn-sm btn-primary" href={`/interviews/${interview.id}/quote`} target="_blank" rel="noreferrer">
+        <a
+          className="btn btn-sm btn-primary"
+          href={`/interviews/${interview.id}/quote`}
+          onClick={(e) => {
+            e.preventDefault();
+            onOpenQuote();
+          }}
+        >
           견적서 뽑기
         </a>
       </div>

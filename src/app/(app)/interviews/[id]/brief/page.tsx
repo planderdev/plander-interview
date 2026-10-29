@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { CopyButton } from "@/components/copy-button";
+import { Crumbs } from "@/components/crumbs";
 import { canEdit, readiness } from "@/lib/access";
 import { estimate, won } from "@/lib/estimate";
 import { stageLabels } from "@/lib/funnel";
@@ -70,7 +71,7 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="mx-auto grid max-w-4xl gap-5">
       <div className="flex flex-wrap items-center gap-2">
-        <Link href="/interviews" className="text-link text-sm text-sub">인터뷰 목록</Link>
+        <Crumbs items={[{ label: "인터뷰 목록", href: "/interviews" }, { label: iv.title || "제목 없는 인터뷰", href: `/interviews/${iv.id}` }, { label: "내부 공유" }]} />
         <div className="ml-auto flex flex-wrap gap-2">
           <Link className="btn btn-sm btn-primary" href={`/interviews/${iv.id}/quote`}>견적서 뽑기</Link>
           <Link className="btn btn-sm" href={`/interviews/${iv.id}/proposal`}>전략 제안서</Link>
