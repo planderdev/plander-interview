@@ -55,6 +55,23 @@ export interface Needs {
   timeline: string;
   budget: string;
   decisionBy: string;
+  /** 웹 서비스 제작 요건. 내부 기록이라 고객 공유에는 나가지 않습니다. */
+  web: WebSpec;
+}
+
+/** 웹 서비스 유형 */
+export type WebKind = "homepage" | "shop" | "booking" | "hotel" | "event";
+
+/** 웹 요건 질문 하나의 답 */
+export interface WebAnswer {
+  picks: string[];
+  note: string;
+}
+
+export interface WebSpec {
+  kinds: WebKind[];
+  /** 질문 id (src/lib/web-interview.ts) 별 답 */
+  answers: Record<string, WebAnswer>;
 }
 
 /** 플랜더가 할 수 있는 일 (단가표 항목) */

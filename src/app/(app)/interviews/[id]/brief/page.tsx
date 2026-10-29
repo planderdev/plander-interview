@@ -17,6 +17,7 @@ import {
 import { getInterview, getMe, listClients, listMembers } from "@/lib/store";
 import { WORKS_URL } from "@/lib/supabase/config";
 import type { ShareSections } from "@/lib/types";
+import { WEB_KIND_LABEL, answerText, answered, webGroups } from "@/lib/web-interview";
 
 export const metadata: Metadata = { title: "내부 공유", robots: { index: false, follow: false } };
 
@@ -176,6 +177,39 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
           ]}
         />
       </Block>
+
+      {iv.needs.web.kinds.length > 0 && (
+        <Block label="Web build" no={++no} title="웹 구축 요건">
+          <p className="text-sm text-sub">{iv.needs.web.kinds.map((k) => WEB_KIND_LABEL[k]).join(", ")}</p>
+          {webGroups(iv.needs.web.kinds).map((g) => {
+            const done = g.questions.filter((q) => answered(iv.needs.web.answers[q.id]));
+            return (
+              <div key={g.id} className="grid gap-2.5 border-t border-line pt-3">
+                <h3 className="font-semibold">
+                  {g.label} <span className="num text-sm font-normal text-sub">{done.length}/{g.questions.length}</span>
+                </h3>
+                {done.length === 0 ? (
+                  <p className="text-sm text-mute">확인한 질문이 없습니다.</p>
+                ) : (
+                  <dl className="grid gap-2.5 text-[14.5px]">
+                    {done.map((q) => (
+                      <div key={q.id} className="grid gap-0.5">
+                        <dt className="text-sub">{q.q}</dt>
+                        <dd className="whitespace-pre-line">{answerText(iv.needs.web.answers[q.id])}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                )}
+                {done.length < g.questions.length && (
+                  <p className="text-xs text-mute">
+                    아직 확인 안 함: {g.questions.filter((q) => !done.includes(q)).map((q) => q.q).join(" · ")}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </Block>
+      )}
 
       <Block label="What we do" no={++no} title="플랜더가 할 수 있는 일">
         {est.lines.length === 0 ? (

@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { nextQuoteNo } from "./quote";
 import { MOCK_MEMBERS, MOCK_USER_COOKIE, mockDb, mockMe, persistMock } from "./mock";
 import { defaultSections, emptyBusiness, emptyCheck, emptyNeeds, emptyQuote, emptySummary, relabel, relabelAll } from "./options";
+import { emptyWeb } from "./web-interview";
 import { RPC, TABLES, isSupabaseConfigured } from "./supabase/config";
 import { createSupabaseServerClient } from "./supabase/server";
 import type { ClientHistory, ClientOption, Interview, Member, SharedInterview } from "./types";
@@ -29,7 +30,7 @@ function fromRow(r: Row): Interview {
     clientName: (r.client_name as string) ?? "",
     counterparts: (r.counterparts as Interview["counterparts"]) ?? [],
     business: { ...emptyBusiness(), ...((r.business as object) ?? {}) },
-    needs: { ...emptyNeeds(), ...((r.needs as object) ?? {}) },
+    needs: withWeb({ ...emptyNeeds(), ...((r.needs as object) ?? {}) }),
     planderItems: (r.plander_items as Interview["planderItems"]) ?? [],
     partnerItems: (r.partner_items as Interview["partnerItems"]) ?? [],
     summary: { ...emptySummary(), ...((r.summary as object) ?? {}) },
@@ -50,6 +51,11 @@ function fromRow(r: Row): Interview {
   };
 }
 
+/** 웹 요건 칸이 없거나 덜 채워진 예전 기록을 기본값으로 채웁니다. */
+function withWeb(n: Interview["needs"]): Interview["needs"] {
+  return { ...n, web: { ...emptyWeb(), ...n.web } };
+}
+
 /** 예전 선택지 이름으로 저장된 값을 지금 이름으로 바꿉니다. */
 function relabelInterview(i: Interview): Interview {
   return {
@@ -65,7 +71,7 @@ function normalize(i: Interview): Interview {
   return relabelInterview({
     ...i,
     business: { ...emptyBusiness(), ...i.business },
-    needs: { ...emptyNeeds(), ...i.needs },
+    needs: withWeb({ ...emptyNeeds(), ...i.needs }),
     summary: { ...emptySummary(), ...i.summary },
     shareSections: { ...defaultSections(), ...i.shareSections },
     check: { ...emptyCheck(), ...i.check },

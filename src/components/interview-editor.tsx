@@ -31,6 +31,7 @@ import { FunnelNotes, FunnelPicker } from "./funnel-picker";
 import { PlanderSection } from "./plander-section";
 import { QuoteFields } from "./quote-fields";
 import { ShareSection } from "./share-section";
+import { WebSection } from "./web-section";
 import { Chips, Field, RemoveButton, Section, uid } from "./ui";
 
 const NAV = [
@@ -38,6 +39,7 @@ const NAV = [
   ["counterparts", "상대측 미팅자"],
   ["business", "고객 사업"],
   ["needs", "원하는 일"],
+  ["web", "웹 구축 요건"],
   ["plander", "플랜더가 할 일"],
   ["partners", "외부 협력"],
   ["share", "공유 범위"],
@@ -445,8 +447,13 @@ export function InterviewEditor({
           </div>
         </Section>
 
-        {/* 05 플랜더가 할 수 있는 일 */}
-        <Section id="plander" no={5} title="플랜더가 할 수 있는 일" desc="플랜더 단가표 기준입니다. 범위 단가는 중간값, '부터' 단가는 시작 금액으로 계산합니다.">
+        {/* 05 웹 구축 요건 */}
+        <Section id="web" no={5} title="웹 구축 요건" desc="홈페이지, 쇼핑몰, 예약 사이트처럼 웹 서비스를 만들 때 유형별로 물어볼 것을 확인합니다.">
+          <WebSection value={iv.needs.web} onChange={(web) => setNeeds({ web })} readOnly={readOnly} />
+        </Section>
+
+        {/* 06 플랜더가 할 수 있는 일 */}
+        <Section id="plander" no={6} title="플랜더가 할 수 있는 일" desc="플랜더 단가표 기준입니다. 범위 단가는 중간값, '부터' 단가는 시작 금액으로 계산합니다.">
           <PlanderSection
             items={iv.planderItems}
             funnel={iv.business.funnel}
@@ -463,10 +470,10 @@ export function InterviewEditor({
           />
         </Section>
 
-        {/* 06 외부 협력 */}
+        {/* 07 외부 협력 */}
         <Section
           id="partners"
-          no={6}
+          no={7}
           title="외부 협력이 필요한 일"
           desc="플랜더가 직접 하지 않고 협력사가 필요한 일입니다. 내부에서만 보이고 고객 공유에는 나가지 않습니다."
           aside={
@@ -530,8 +537,8 @@ export function InterviewEditor({
           {partnerTotal > 0 && <p className="num text-right text-sm text-sub">외부 협력 예상 비용 합계 {won(partnerTotal)}</p>}
         </Section>
 
-        {/* 07 공유 범위 */}
-        <Section id="share" no={7} title="공유 범위" desc="플랜더 안에서 누가 볼지, 고객에게 무엇을 보여 줄지 정합니다.">
+        {/* 08 공유 범위 */}
+        <Section id="share" no={8} title="공유 범위" desc="플랜더 안에서 누가 볼지, 고객에게 무엇을 보여 줄지 정합니다.">
           <ShareSection
             interview={iv}
             onOpenBrief={() => openDoc("brief")}
@@ -547,8 +554,8 @@ export function InterviewEditor({
           />
         </Section>
 
-        {/* 08 의뢰 전환 */}
-        <Section id="convert" no={8} title="의뢰 전환" desc="미팅이 의뢰로 이어지면 웍스에 클라이언트와 프로젝트를 만듭니다.">
+        {/* 09 의뢰 전환 */}
+        <Section id="convert" no={9} title="의뢰 전환" desc="미팅이 의뢰로 이어지면 웍스에 클라이언트와 프로젝트를 만듭니다.">
           <ConvertSection
             interview={iv}
             clients={clients}

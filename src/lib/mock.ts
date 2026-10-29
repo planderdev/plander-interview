@@ -3,6 +3,7 @@ import path from "node:path";
 
 import { defaultSections, emptyCheck, emptyQuote } from "./options";
 import { nextQuoteNo } from "./quote";
+import { emptyWeb } from "./web-interview";
 import type { ClientOption, Interview, Member } from "./types";
 
 const client = (id: string, name: string, o: Partial<ClientOption> = {}): ClientOption => ({
@@ -54,6 +55,7 @@ function seed(): Interview[] {
         timeline: "1개월 안",
         budget: "100~300만 원",
         decisionBy: "11월 첫째 주",
+        web: emptyWeb(),
       },
       planderItems: [
         { id: "p1", catalogId: "placeseo", tier: 0, qty: 1, note: "" },
@@ -109,7 +111,17 @@ function seed(): Interview[] {
         channels: ["홈페이지", "네이버 블로그"],
         description: "",
       },
-      needs: { goals: ["상담 문의 늘리기"], targets: ["B2B"], wantChannels: [], period: "", constraints: [], pains: "홈페이지 문의가 월 2~3건", wish: "", timeline: "분기 안", budget: "미정", decisionBy: "" },
+      needs: { goals: ["상담 문의 늘리기"], targets: ["B2B"], wantChannels: [], period: "", constraints: [], pains: "홈페이지 문의가 월 2~3건", wish: "", timeline: "분기 안", budget: "미정", decisionBy: "",
+        web: {
+          kinds: ["homepage"],
+          answers: {
+            purpose: { picks: ["문의 받기"], note: "" },
+            pages: { picks: [], note: "소개, 업무 분야 6개, 구성원, 상담 사례, 상담 신청" },
+            content: { picks: ["일부만 제공"], note: "업무 분야 글은 플랜더가 초안 작성" },
+            "hp-contact": { picks: ["문의 폼", "카카오톡 채널"], note: "사무장이 받음" },
+          },
+        },
+      },
       planderItems: [],
       partnerItems: [],
       summary: { oneline: "", external: "", risks: "", nextActions: [], internalMemo: "대표 변호사 미팅 다시 잡아야 함" },
