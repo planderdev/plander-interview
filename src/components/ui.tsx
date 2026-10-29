@@ -74,6 +74,8 @@ export function Chips({
   disabled?: boolean;
   label: string;
 }) {
+  // 웍스에서 불러온 업종처럼 목록에 없는 값도 선택된 칩으로 보여 줍니다.
+  const extra = !multi && typeof value === "string" && value && !options.includes(value) ? [value] : [];
   const selected = (o: string) => (Array.isArray(value) ? value.includes(o) : value === o);
   function click(o: string) {
     if (multi) {
@@ -83,7 +85,7 @@ export function Chips({
   }
   return (
     <div className="flex flex-wrap gap-2" role="group" aria-label={label}>
-      {options.map((o) => (
+      {[...options, ...extra].map((o) => (
         <button key={o} type="button" className="toggle-chip" aria-pressed={selected(o)} onClick={() => click(o)} disabled={disabled}>
           {o}
         </button>

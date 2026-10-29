@@ -3,7 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { convertInterview, deleteInterview, getMe, saveInterview, setShare, type ConvertInput } from "@/lib/store";
+import {
+  convertInterview,
+  deleteInterview,
+  getClientHistory,
+  getMe,
+  saveInterview,
+  setShare,
+  type ConvertInput,
+} from "@/lib/store";
 import type { Interview } from "@/lib/types";
 
 type Result<T> = { ok: true; data: T } | { ok: false; error: string };
@@ -46,6 +54,11 @@ export async function convertAction(input: ConvertInput) {
     revalidatePath(`/interviews/${input.id}`);
     return r;
   });
+}
+
+/** 불러온 웍스 고객의 지난 프로젝트와 인터뷰 */
+export async function clientHistoryAction(clientId: string, interviewId: string) {
+  return run(async () => getClientHistory(await requireMe(), clientId, interviewId));
 }
 
 export async function deleteAction(id: string) {

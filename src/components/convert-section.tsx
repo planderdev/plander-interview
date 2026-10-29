@@ -45,7 +45,15 @@ export function ConvertSection({
   const finalTitle = title || `${interview.clientName || "고객사"} ${category || guess || "프로젝트"}`.trim();
   const finalCategory = category || guess;
   const finalBudget = budget === "" ? est.supply || null : Number(budget) || null;
-  const targetClient = clientMode === "existing" ? clientId : clientMode === "auto" ? sameName?.id ?? "" : "";
+  // 미팅 정보에서 웍스 고객을 불러왔으면 그 고객에 붙입니다.
+  const linked = interview.clientId ? clients.find((c) => c.id === interview.clientId) ?? null : null;
+  const targetClient = linked
+    ? linked.id
+    : clientMode === "existing"
+      ? clientId
+      : clientMode === "auto"
+        ? sameName?.id ?? ""
+        : "";
 
   if (interview.projectId) {
     return (
@@ -71,7 +79,7 @@ export function ConvertSection({
 
   function convert() {
     setError("");
-    if (clientMode === "existing" && !clientId) return setError("연결할 웍스 클라이언트를 골라 주세요.");
+    if (!linked && clientMode === "existing" && !clientId) return setError("연결할 웍스 클라이언트를 골라 주세요.");
     start(async () => {
       if (!(await flush())) return setError("저장에 실패해 전환하지 못했습니다. 잠시 뒤 다시 눌러 주세요.");
       const res = await convertAction({
@@ -156,6 +164,11 @@ export function ConvertSection({
           </div>
           <div className="grid gap-1.5 sm:col-span-2">
             <span className="label">웍스 클라이언트</span>
+            {linked ? (
+              <p className="text-sm">
+                미팅 정보에서 불러온 <span className="font-semibold">{linked.name}</span>에 프로젝트를 추가합니다. 새 클라이언트는 만들지 않습니다.
+              </p>
+            ) : (
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="웍스 클라이언트">
               <button type="button" className="toggle-chip" aria-pressed={clientMode === "auto"} onClick={() => setClientMode("auto")} disabled={readOnly}>
                 {sameName ? `기존 "${sameName.name}"에 연결` : "새 클라이언트 만들기"}
@@ -169,7 +182,8 @@ export function ConvertSection({
                 다른 클라이언트 고르기
               </button>
             </div>
-            {clientMode === "existing" && (
+            )}
+            {!linked && clientMode === "existing" && (
               <select className="field" aria-label="연결할 클라이언트" value={clientId} onChange={(e) => setClientId(e.target.value)}>
                 <option value="">클라이언트 선택</option>
                 {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}

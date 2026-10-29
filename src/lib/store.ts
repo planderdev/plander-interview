@@ -7,7 +7,7 @@ import { MOCK_MEMBERS, mockDb, mockMe } from "./mock";
 import { defaultSections, emptyBusiness, emptyCheck, emptyNeeds, emptySummary } from "./options";
 import { RPC, TABLES, isSupabaseConfigured } from "./supabase/config";
 import { createSupabaseServerClient } from "./supabase/server";
-import type { ClientOption, Interview, Member, SharedInterview } from "./types";
+import type { ClientHistory, ClientOption, Interview, Member, SharedInterview } from "./types";
 
 /* ------------------------------------------------------------------ */
 /* DB 행 <-> Interview                                                  */
@@ -65,6 +65,8 @@ function toEditableRow(i: Interview): Row {
     internal_scope: i.internalScope,
     share_sections: i.shareSections,
     conversion_check: i.check,
+    // 전환 전에는 불러온 웍스 고객을 바꿀 수 있습니다. 전환 뒤에는 DB 트리거가 막습니다.
+    client_id: i.projectId ? undefined : i.clientId,
   };
 }
 
@@ -101,8 +103,58 @@ export const listMembers = cache(async (): Promise<Member[]> => {
 export async function listClients(): Promise<ClientOption[]> {
   const sb = await createSupabaseServerClient();
   if (!sb) return mockDb().clients;
-  const { data } = await sb.from(TABLES.clients).select("id,name").eq("is_archived", false).order("name");
-  return (data ?? []) as ClientOption[];
+  const { data } = await sb
+    .from(TABLES.clients)
+    .select("id,name,industry,contact_name,phone,email,website,address")
+    .eq("is_archived", false)
+    .order("name");
+  return (data ?? []).map((c) => ({
+    id: c.id,
+    name: c.name,
+    industry: c.industry ?? "",
+    contactName: c.contact_name ?? "",
+    phone: c.phone ?? "",
+    email: c.email ?? "",
+    website: c.website ?? "",
+    address: c.address ?? "",
+  }));
+}
+
+/** 불러온 웍스 고객의 최근 프로젝트와, 내가 볼 수 있는 지난 인터뷰 */
+export async function getClientHistory(me: Member, clientId: string, exceptInterview: string): Promise<ClientHistory> {
+  const sb = await createSupabaseServerClient();
+  if (!sb) {
+    const db = mockDb();
+    return {
+      projects: db.projects
+        .filter((p) => p.clientId === clientId)
+        .map(({ id, title, status, category, startDate, endDate }) => ({ id, title, status, category, startDate, endDate })),
+      interviews: db.interviews
+        .filter((i) => i.clientId === clientId && i.id !== exceptInterview && canView(i, me))
+        .map((i) => ({ id: i.id, title: i.title, heldAt: i.heldAt, status: i.status })),
+    };
+  }
+  const [p, iv] = await Promise.all([
+    sb
+      .from(TABLES.projects)
+      .select("id,title,status,category,start_date,end_date")
+      .eq("client_id", clientId)
+      .order("created_at", { ascending: false })
+      .limit(6),
+    sb
+      .from(TABLES.interviews)
+      .select("id,title,held_at,status")
+      .eq("client_id", clientId)
+      .neq("id", exceptInterview)
+      .order("held_at", { ascending: false })
+      .limit(6),
+  ]);
+  return {
+    projects: (p.data ?? []).map((x) => ({
+      id: x.id, title: x.title, status: x.status, category: x.category ?? "", startDate: x.start_date, endDate: x.end_date,
+    })),
+    interviews: (iv.data ?? []).map((x) => ({ id: x.id, title: x.title, heldAt: (x.held_at ?? "").slice(0, 16), status: x.status })),
+  };
 }
 
 /* ------------------------------------------------------------------ */
@@ -174,7 +226,7 @@ export async function saveInterview(me: Member, next: Interview): Promise<{ upda
       status: cur.status === "converted" ? "converted" : next.status,
       shareEnabled: cur.shareEnabled,
       shareToken: cur.shareToken,
-      clientId: cur.clientId,
+      clientId: cur.projectId ? cur.clientId : next.clientId,
       projectId: cur.projectId,
       convertedAt: cur.convertedAt,
       createdBy: cur.createdBy,
@@ -256,13 +308,17 @@ export async function convertInterview(me: Member, input: ConvertInput): Promise
     const i = db.interviews.find((x) => x.id === input.id);
     if (!i || !canEdit(i, me)) throw new Error("전환 권한이 없습니다.");
     if (i.projectId) throw new Error("이미 의뢰로 전환한 인터뷰입니다.");
-    let clientId = input.clientId;
+    let clientId = input.clientId ?? i.clientId;
     if (!clientId) {
       clientId = `cl-${crypto.randomUUID().slice(0, 8)}`;
-      db.clients.push({ id: clientId, name: i.clientName || i.title });
+      const cp = i.counterparts.find((c) => c.role === "decision") ?? i.counterparts[0];
+      db.clients.push({
+        id: clientId, name: i.clientName || i.title, industry: i.business.industry, contactName: cp?.name ?? "",
+        phone: cp?.phone ?? "", email: cp?.email ?? "", website: i.business.website, address: i.business.region,
+      });
     }
     const projectId = `pj-${crypto.randomUUID().slice(0, 8)}`;
-    db.projects.push({ id: projectId, title: input.title, clientId });
+    db.projects.push({ id: projectId, title: input.title, clientId, status: "waiting", category: input.category, startDate: null, endDate: null });
     Object.assign(i, {
       status: "converted",
       clientId,

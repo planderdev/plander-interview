@@ -21,6 +21,7 @@ import {
 import { won } from "@/lib/estimate";
 import type { Business, ClientOption, Counterpart, Interview, Member, Needs, PartnerItem, Summary } from "@/lib/types";
 
+import { ClientPicker } from "./client-picker";
 import { ConvertSection } from "./convert-section";
 import { PlanderSection } from "./plander-section";
 import { ShareSection } from "./share-section";
@@ -120,6 +121,37 @@ export function InterviewEditor({
     update({ counterparts: iv.counterparts.map((c) => (c.id === id ? { ...c, ...p } : c)) });
   const setPartner = (id: string, p: Partial<PartnerItem>) =>
     update({ partnerItems: iv.partnerItems.map((x) => (x.id === id ? { ...x, ...p } : x)) });
+  /** 웍스 고객 불러오기: 비어 있는 칸만 채우고, 이미 적은 내용은 덮지 않습니다. */
+  function pickClient(c: ClientOption) {
+    const region = c.address.split(" ").slice(0, 2).join(" ");
+    const hasContact = c.contactName && iv.counterparts.some((x) => x.name.trim() === c.contactName.trim());
+    update({
+      clientId: c.id,
+      clientName: c.name,
+      business: {
+        ...iv.business,
+        industry: iv.business.industry || c.industry,
+        website: iv.business.website || c.website,
+        region: iv.business.region || region,
+      },
+      counterparts:
+        c.contactName && !hasContact
+          ? [
+              ...iv.counterparts,
+              {
+                id: uid(),
+                name: c.contactName,
+                title: "",
+                phone: c.phone,
+                email: c.email,
+                role: iv.counterparts.length ? "practical" : "decision",
+                note: "웍스 고객 정보에서 불러옴",
+              },
+            ]
+          : iv.counterparts,
+    });
+  }
+
   const nameOf = (id: string) => members.find((m) => m.id === id)?.name ?? "알 수 없음";
   const partnerTotal = iv.partnerItems.reduce((s, x) => s + (x.cost ?? 0), 0);
 
@@ -182,6 +214,17 @@ export function InterviewEditor({
 
         {/* 01 미팅 정보 */}
         <Section id="meeting" no={1} title="미팅 정보" desc="언제, 어디서, 누가 만났는지 남깁니다.">
+          <ClientPicker
+            interviewId={iv.id}
+            clientId={iv.clientId}
+            clientName={iv.clientName}
+            clients={clients}
+            worksUrl={worksUrl}
+            readOnly={readOnly}
+            locked={Boolean(iv.projectId)}
+            onPick={pickClient}
+            onUnlink={() => update({ clientId: null })}
+          />
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="고객사 이름" htmlFor="client-name">
               <input id="client-name" className="field" value={iv.clientName} placeholder="예: 한라국수" onChange={(e) => update({ clientName: e.target.value })} readOnly={readOnly} />

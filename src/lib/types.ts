@@ -127,7 +127,7 @@ export interface Interview {
   shareToken: string | null;
   shareSections: ShareSections;
   check: ConversionCheck;
-  /** 의뢰 전환 결과 (웍스 클라이언트, 프로젝트) */
+  /** 연결된 웍스 클라이언트. 인터뷰 중에 불러오거나, 의뢰 전환 때 새로 만들어 채웁니다. */
   clientId: string | null;
   projectId: string | null;
   convertedAt: string | null;
@@ -152,7 +152,20 @@ export interface SharedInterview {
   updatedAt: string;
 }
 
+/** 플랜더웍스에 등록된 고객 (pw_clients) */
 export interface ClientOption {
   id: string;
   name: string;
+  industry: string;
+  contactName: string;
+  phone: string;
+  email: string;
+  website: string;
+  address: string;
+}
+
+/** 웍스 고객을 불러왔을 때 보여 주는 지난 기록 */
+export interface ClientHistory {
+  projects: { id: string; title: string; status: string; category: string; startDate: string | null; endDate: string | null }[];
+  interviews: { id: string; title: string; heldAt: string; status: string }[];
 }

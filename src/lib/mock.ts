@@ -1,6 +1,10 @@
 import { defaultSections, emptyCheck } from "./options";
 import type { ClientOption, Interview, Member } from "./types";
 
+const client = (id: string, name: string, o: Partial<ClientOption> = {}): ClientOption => ({
+  id, name, industry: "", contactName: "", phone: "", email: "", website: "", address: "", ...o,
+});
+
 /** 목업 모드 구성원. 실제 직원 이름을 쓰지 않습니다. */
 export const MOCK_MEMBERS: Member[] = [
   { id: "m1", name: "김플랜", role: "super_admin", position: "대표", team: "경영지원" },
@@ -118,7 +122,7 @@ function seed(): Interview[] {
 interface MockDb {
   interviews: Interview[];
   clients: ClientOption[];
-  projects: { id: string; title: string; clientId: string }[];
+  projects: { id: string; title: string; clientId: string; status: string; category: string; startDate: string | null; endDate: string | null }[];
 }
 
 const g = globalThis as unknown as { __piMock?: MockDb };
@@ -129,10 +133,14 @@ export function mockDb(): MockDb {
     g.__piMock = {
       interviews: seed(),
       clients: [
-        { id: "cl-1", name: "예시) 바다법률사무소" },
-        { id: "cl-2", name: "예시) 제주카페" },
+        client("cl-1", "예시) 바다법률사무소", { industry: "법률, 세무 등 전문직", contactName: "한샘플", email: "sample@example.com", website: "https://example.com", address: "서울특별시 중구" }),
+        client("cl-2", "예시) 제주카페", { industry: "식당, 카페", contactName: "문예시", phone: "010-0000-0001", address: "제주특별자치도 제주시 연동" }),
+        client("cl-3", "예시) 오름베이커리", { industry: "커머스", contactName: "고샘플", phone: "010-0000-0002", website: "https://example.org", address: "제주특별자치도 서귀포시" }),
       ],
-      projects: [],
+      projects: [
+        { id: "pj-ex-1", title: "예시) 제주카페 홈페이지 제작", clientId: "cl-2", status: "completed", category: "홈페이지 제작", startDate: "2026-05-01", endDate: "2026-06-15" },
+        { id: "pj-ex-2", title: "예시) 제주카페 여름 체험단", clientId: "cl-2", status: "in_progress", category: "국내마케팅", startDate: "2026-09-01", endDate: "2026-11-30" },
+      ],
     };
   }
   return g.__piMock;

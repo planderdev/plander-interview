@@ -6,6 +6,7 @@ export const TABLES = {
   interviews: "pi_interviews",
   users: "pw_users",
   clients: "pw_clients",
+  projects: "pw_projects",
 } as const;
 
 export const RPC = {
