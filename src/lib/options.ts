@@ -10,6 +10,7 @@ import type {
   Summary,
   UserRole,
 } from "./types";
+import { emptyWeb } from "./web-interview";
 
 export const STATUS_META: Record<InterviewStatus, { label: string; tone: string }> = {
   draft: { label: "작성중", tone: "text-sub" },
@@ -144,7 +145,7 @@ export const emptyBusiness = (): Business => ({
 });
 export const emptyNeeds = (): Needs => ({
   goals: [], targets: [], wantChannels: [], period: "", constraints: [],
-  pains: "", wish: "", timeline: "", budget: "", decisionBy: "",
+  pains: "", wish: "", timeline: "", budget: "", decisionBy: "", web: emptyWeb(),
 });
 export const emptySummary = (): Summary => ({ oneline: "", external: "", risks: "", nextActions: [], internalMemo: "" });
 export const defaultSections = (): ShareSections => ({

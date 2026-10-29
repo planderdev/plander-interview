@@ -8,6 +8,7 @@ const SECTION_LABEL: Record<string, string> = {
   counterparts: "Counterpart",
   business: "Business",
   needs: "Needs",
+  web: "Web build",
   plander: "What we do",
   partners: "Partners",
   summary: "Summary",

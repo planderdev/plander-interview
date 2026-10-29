@@ -1,4 +1,5 @@
 import { resolveQuote } from "./quote";
+import { emptyWeb } from "./web-interview";
 import type { Interview, Member, SharedInterview } from "./types";
 
 /**
@@ -42,6 +43,7 @@ export function toShared(i: Interview, ownerName = ""): SharedInterview {
           constraints: [],
           budget: "",
           decisionBy: "",
+          web: emptyWeb(),
         }
       : undefined,
     summary: undefined,
