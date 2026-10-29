@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "플랜더 인터뷰", template: "%s · 플랜더 인터뷰" },
+  title: { default: "플랜더 인터뷰", template: "%s, 플랜더 인터뷰" },
   description: "고객 미팅을 기록하고 정리해 의뢰로 이어 주는 플랜더 사내 도구",
   icons: { icon: "/icon.svg" },
   robots: { index: false, follow: false },
