@@ -42,7 +42,8 @@ export default async function QuotePreviewPage({ params }: { params: Promise<{ i
             ? "고객 공유 페이지의 견적서 보기 버튼으로 고객도 같은 견적서를 봅니다."
             : "고객에게 보이려면 공유 범위에서 고객 공유 링크를 켜고 예상 금액을 고르세요."}
         </span>
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex flex-wrap gap-2">
+          <Link className="btn btn-sm" href={`/interviews/${iv.id}`}>인터뷰로 돌아가기</Link>
           {customerReady && iv.shareToken && (
             <a className="btn btn-sm" href={`/s/${iv.shareToken}/quote`} target="_blank" rel="noreferrer">고객 화면으로 보기</a>
           )}

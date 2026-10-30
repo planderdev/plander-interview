@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { CopyButton } from "@/components/copy-button";
 import { Crumbs } from "@/components/crumbs";
-import { canEdit, readiness } from "@/lib/access";
+import { readiness } from "@/lib/access";
 import { estimate, won } from "@/lib/estimate";
 import { stageLabels } from "@/lib/funnel";
 import {
@@ -73,13 +73,13 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
       <div className="flex flex-wrap items-center gap-2">
         <Crumbs items={[{ label: "인터뷰 목록", href: "/interviews" }, { label: iv.title || "제목 없는 인터뷰", href: `/interviews/${iv.id}` }, { label: "내부 공유" }]} />
         <div className="ml-auto flex flex-wrap gap-2">
+          <Link className="btn btn-sm" href={`/interviews/${iv.id}`}>인터뷰로 돌아가기</Link>
           <Link className="btn btn-sm btn-primary" href={`/interviews/${iv.id}/quote`}>견적서 뽑기</Link>
           <Link className="btn btn-sm" href={`/interviews/${iv.id}/proposal`}>전략 제안서</Link>
           <CopyButton path={`/interviews/${iv.id}/brief`} label="내부 공유 링크 복사" />
           {iv.shareEnabled && iv.shareToken && (
             <a className="btn btn-sm" href={`/s/${iv.shareToken}`} target="_blank" rel="noreferrer">외부 공유 페이지</a>
           )}
-          {canEdit(iv, me) && <Link className="btn btn-sm" href={`/interviews/${iv.id}`}>편집하기</Link>}
         </div>
       </div>
 
