@@ -13,6 +13,7 @@ export function ShareSection({
   interview,
   onChange,
   onShareChange,
+  flush,
   onOpenBrief,
   readOnly,
 }: {
@@ -20,7 +21,9 @@ export function ShareSection({
   /** 저장한 뒤 같은 탭에서 내부 공유 페이지를 엽니다 */
   onOpenBrief: () => void;
   onChange: (patch: Partial<Interview>) => void;
-  onShareChange: (enabled: boolean, token: string | null) => void;
+  onShareChange: (enabled: boolean, token: string | null, updatedAt: string) => void;
+  /** 링크를 바꾸기 전에 저장 대기 중인 변경을 먼저 저장합니다. */
+  flush: () => Promise<boolean>;
   readOnly: boolean;
 }) {
   const [pending, start] = useTransition();
@@ -33,9 +36,10 @@ export function ShareSection({
   function toggleShare(enabled: boolean) {
     setMsg("");
     start(async () => {
+      if (!(await flush())) return setMsg("저장하지 못한 변경이 있어 링크를 바꾸지 않았습니다.");
       const r = await shareAction(interview.id, enabled);
       if (!r.ok) return setMsg(r.error);
-      onShareChange(enabled, r.data);
+      onShareChange(enabled, r.data.token, r.data.updatedAt);
       setMsg(enabled ? "고객 공유 링크를 만들었습니다." : "링크를 껐습니다. 예전 링크는 더 열리지 않습니다.");
     });
   }

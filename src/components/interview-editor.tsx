@@ -44,7 +44,7 @@ const NAV = [
   ["convert", "의뢰 전환"],
 ] as const;
 
-type SaveState = "saved" | "dirty" | "saving" | "error";
+type SaveState = "saved" | "dirty" | "saving" | "error" | "conflict";
 
 export function InterviewEditor({
   initial,
@@ -71,20 +71,30 @@ export function InterviewEditor({
   const latest = useRef(iv);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const inflight = useRef<Promise<boolean> | null>(null);
+  /** 이 화면이 마지막으로 받은 서버의 수정 시각. 저장할 때 비교해 남의 변경을 덮지 않습니다. */
+  const base = useRef(initial.updatedAt);
+  /** 충돌이 나면 자동 저장을 멈추고, 사람이 고를 때까지 기다립니다. */
+  const conflicted = useRef(false);
+  /** 최신 내용을 불러오려고 다시 열 때는 나가기 경고를 띄우지 않습니다. */
+  const reloading = useRef(false);
   const readOnly = !editable;
 
-  const save = useCallback(async (): Promise<boolean> => {
+  const save = useCallback(async (opts?: { overwrite?: boolean }): Promise<boolean> => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
     if (inflight.current) await inflight.current;
+    if (conflicted.current && !opts?.overwrite) return false;
     const snapshot = latest.current;
     setState("saving");
-    const p = saveAction(snapshot).then((r) => {
+    const p = saveAction(snapshot, opts?.overwrite ? null : base.current).then((r) => {
       if (!r.ok) {
-        setState("error");
+        conflicted.current = r.conflict;
+        setState(r.conflict ? "conflict" : "error");
         setError(r.error);
         return false;
       }
+      base.current = r.data.updatedAt;
+      conflicted.current = false;
       setError("");
       setState(latest.current === snapshot ? "saved" : "dirty");
       return true;
@@ -104,6 +114,7 @@ export function InterviewEditor({
         latest.current = next;
         return next;
       });
+      if (conflicted.current) return;
       setState("dirty");
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => void save(), 900);
@@ -114,7 +125,8 @@ export function InterviewEditor({
   // 저장 전에 창을 닫으려 하면 경고합니다.
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
-      if (state === "dirty" || state === "saving") e.preventDefault();
+      if (reloading.current) return;
+      if (state === "dirty" || state === "saving" || state === "conflict") e.preventDefault();
     };
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
@@ -132,7 +144,8 @@ export function InterviewEditor({
       const go = () => {
         window.location.href = `/interviews/${iv.id}/${path}`;
       };
-      if (state !== "saved" && !readOnly) void save().then(go);
+      // 저장에 실패하면(충돌 포함) 옮기지 않고 이 화면에 남습니다.
+      if (state !== "saved" && !readOnly) void save().then((ok) => ok && go());
       else go();
     },
     [iv.id, state, readOnly, save],
@@ -177,6 +190,7 @@ export function InterviewEditor({
     dirty: "저장 대기",
     saving: "저장 중",
     error: "저장 실패",
+    conflict: "저장 멈춤",
   };
 
   return (
@@ -221,18 +235,42 @@ export function InterviewEditor({
           ))}
           <span className="chip ml-auto" role="status">
             <span
-              className={`dot ${readOnly ? "text-mute" : state === "error" ? "text-danger" : state === "saved" ? "text-success" : "text-prism"}`}
+              className={`dot ${readOnly ? "text-mute" : state === "error" || state === "conflict" ? "text-danger" : state === "saved" ? "text-success" : "text-prism"}`}
               aria-hidden
             />
             {readOnly ? "읽기 전용" : stateLabel[state]}
           </span>
-          {!readOnly && state !== "saved" && (
+          {!readOnly && state !== "saved" && state !== "conflict" && (
             <button type="button" className="btn btn-sm" onClick={() => void save()} disabled={state === "saving"}>
               지금 저장
             </button>
           )}
         </div>
-        {error && <p className="text-sm text-danger" role="alert">{error}</p>}
+        {state === "conflict" ? (
+          <div className="tile grid gap-3 p-4" role="alert">
+            <p className="text-sm">{error}</p>
+            <p className="text-sm text-sub">
+              최신 내용을 불러오면 이 화면에서 고친 내용은 사라집니다. 내 내용으로 덮어쓰면 상대가 고친 내용이 사라집니다.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="btn btn-sm btn-primary"
+                onClick={() => {
+                  reloading.current = true;
+                  window.location.reload();
+                }}
+              >
+                최신 내용 불러오기
+              </button>
+              <button type="button" className="btn btn-sm" onClick={() => void save({ overwrite: true })}>
+                내 내용으로 덮어쓰기
+              </button>
+            </div>
+          </div>
+        ) : (
+          error && <p className="text-sm text-danger" role="alert">{error}</p>
+        )}
         {readOnly && (
           <p className="tile p-3 text-sm text-sub">
             이 인터뷰는 볼 수만 있습니다. 고치려면 작성자나 운영자에게 플랜더 참석자로 넣어 달라고 요청하세요.
@@ -537,7 +575,9 @@ export function InterviewEditor({
             onOpenBrief={() => openDoc("brief")}
             onChange={update}
             readOnly={readOnly}
-            onShareChange={(shareEnabled, shareToken) => {
+            flush={save}
+            onShareChange={(shareEnabled, shareToken, updatedAt) => {
+              base.current = updatedAt;
               setIv((cur) => {
                 const next = { ...cur, shareEnabled, shareToken };
                 latest.current = next;
@@ -556,7 +596,8 @@ export function InterviewEditor({
             readOnly={readOnly}
             onChange={update}
             flush={save}
-            onConverted={(clientId, projectId) => {
+            onConverted={(clientId, projectId, updatedAt) => {
+              base.current = updatedAt;
               setIv((cur) => {
                 const next = { ...cur, clientId, projectId, status: "converted" as const, convertedAt: new Date().toISOString() };
                 latest.current = next;
