@@ -31,7 +31,7 @@ export default async function SharedQuotePage({ params }: { params: Promise<{ to
         />
       </div>
       <div className="mx-auto max-w-[860px] rounded-[6px] border border-[#D8DDE6] shadow-[0_20px_50px_-30px_rgba(20,30,60,.35)] print:border-0 print:shadow-none">
-        <QuoteDocument quote={s.quote} clientName={s.clientName} items={s.planderItems ?? []} sealSrc={unlocked && sealAvailable() ? SEAL_SRC : undefined} />
+        <QuoteDocument quote={s.quote} clientName={s.clientName} items={s.planderItems ?? []} sealSrc={sealAvailable() ? SEAL_SRC : undefined} />
         <FitA4 targetId="quote-sheet" />
       </div>
     </div>

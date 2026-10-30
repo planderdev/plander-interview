@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { unlockPdfAction } from "@/app/pdf-actions";
 
 /**
- * 견적서 PDF 뽑기. 비밀번호를 넣어야 인쇄 창이 열리고, 그때 직인이 함께 찍힙니다.
+ * 견적서 PDF 뽑기. 비밀번호를 넣어야 인쇄 창이 열립니다. 직인은 화면에서도 보입니다.
  * 잠금을 풀면 30분 동안은 다시 묻지 않습니다.
  */
 export function PdfButton({

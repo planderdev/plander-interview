@@ -51,7 +51,7 @@ export default async function QuotePreviewPage({ params }: { params: Promise<{ i
       </div>
       <div className="print-plain rounded-[6px] bg-[#F1F2F6] p-2 sm:p-6">
         <div className="mx-auto max-w-[860px] rounded-[6px] border border-[#D8DDE6] print:border-0">
-          <QuoteDocument quote={quote} clientName={iv.clientName} items={iv.planderItems} sealSrc={unlocked && sealAvailable() ? SEAL_SRC : undefined} />
+          <QuoteDocument quote={quote} clientName={iv.clientName} items={iv.planderItems} sealSrc={sealAvailable() ? SEAL_SRC : undefined} />
           <FitA4 targetId="quote-sheet" />
         </div>
       </div>
