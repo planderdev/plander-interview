@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
   if (!url || !key) return NextResponse.next();
 
   const { pathname } = request.nextUrl;
-  // 고객 공유와 직인(자체 쿠키 확인)은 로그인 없이 통과시킵니다.
+  // 고객 공유와 직인은 로그인 없이 통과시킵니다. 직인은 /api/seal 이 로그인이나 공유 토큰을 직접 확인합니다.
   if (pathname.startsWith("/s/") || pathname === "/api/seal") return NextResponse.next();
 
   let response = NextResponse.next({ request });
