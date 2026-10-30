@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { PdfButton } from "@/components/pdf-button";
 import { FitA4 } from "@/components/fit-a4";
 import { QuoteDocument } from "@/components/quote-document";
-import { SEAL_SRC, isPdfUnlocked, pdfPasswordConfigured, sealAvailable } from "@/lib/seal";
+import { isPdfUnlocked, pdfPasswordConfigured, sealAvailable, sharedSealSrc } from "@/lib/seal";
 import { getShared } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +31,7 @@ export default async function SharedQuotePage({ params }: { params: Promise<{ to
         />
       </div>
       <div className="mx-auto max-w-[860px] rounded-[6px] border border-[#D8DDE6] shadow-[0_20px_50px_-30px_rgba(20,30,60,.35)] print:border-0 print:shadow-none">
-        <QuoteDocument quote={s.quote} clientName={s.clientName} items={s.planderItems ?? []} sealSrc={sealAvailable() ? SEAL_SRC : undefined} />
+        <QuoteDocument quote={s.quote} clientName={s.clientName} items={s.planderItems ?? []} sealSrc={sealAvailable() ? sharedSealSrc(token) : undefined} />
         <FitA4 targetId="quote-sheet" />
       </div>
     </div>

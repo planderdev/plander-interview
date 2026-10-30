@@ -10,12 +10,15 @@ import { cookies } from "next/headers";
  * 견적서 PDF 잠금과 직인.
  *
  * - PDF 로 뽑으려면 비밀번호(QUOTE_PDF_PASSWORD)를 넣어야 합니다. 맞으면 30분 동안 쓸 수 있는 쿠키를 줍니다.
- * - 직인 이미지는 공개 폴더에 두지 않고, 잠금을 푼 사람에게만 /api/seal 로 내려 줍니다.
+ * - 직인 이미지는 공개 폴더에 두지 않고 /api/seal 로 내려 줍니다. 로그인한 구성원과,
+ *   예상 금액을 공유 중인 고객 링크(sharedSealSrc)로 들어온 사람만 받을 수 있습니다.
  *   배포에서는 환경 변수 SEAL_PNG_BASE64, 로컬에서는 private/plander-seal.png 를 씁니다(둘 다 git 에 없음).
  * - 비밀번호를 바꾸면 이미 받은 쿠키도 바로 무효가 됩니다.
  */
 
 export const SEAL_SRC = "/api/seal";
+/** 고객 공유 견적서에서 쓰는 직인 주소. 서버가 토큰으로 공유 상태를 확인합니다. */
+export const sharedSealSrc = (token: string) => `${SEAL_SRC}?s=${encodeURIComponent(token)}`;
 const COOKIE = "pi_pdf";
 const TTL_SECONDS = 30 * 60;
 
